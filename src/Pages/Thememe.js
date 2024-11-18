@@ -126,11 +126,13 @@ const Thememe = () => {
         // telegramId: data1.telegramId,
         userWatchSeconds: 0,
       };
+      
       // Calculate streak data and update the state
-      if (parsedData1&&parsedData1?.watchSec < 180 ){
+      if ((parsedData1&&parsedData1?.watchSec < 180) || (!parsedData1 ) ){
        calculatedStreak = await calculateStreak(data24);
       }
-      const calculatedStreakData = parsedData1&&parsedData1?.watchSec < 180 ?calculatedStreak:calculatedStreakDataInfo
+      const calculatedStreakData = (  parsedData1&&parsedData1?.watchSec < 180 ) || (!parsedData1 )?calculatedStreak:calculatedStreakDataInfo;
+      
       userDetails.userDetails.streakData = calculatedStreakData;
       if (
         calculatedStreakData.login &&
