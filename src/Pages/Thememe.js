@@ -33,7 +33,7 @@ const Thememe = () => {
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
     useUserInfo();
   const [isTutorial, setIsTutorial] = useState(true);
-
+ let calculatedStreakDataInfo ;
   const latestUserDetails = useRef(userDetails);
   const latestWatchScreen = useRef(watchScreen);
 
@@ -42,15 +42,15 @@ const Thememe = () => {
     latestWatchScreen.current = watchScreen;
     const storedData1 = localStorage.getItem("watchStreak");
     const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
-    if (
-      parsedData1 &&
-      parsedData1 !== 0 &&
-      parsedData1.watchSec > 180 &&
-      !parsedData1?.updated
-    ) {
-      // postWatchStreak(String(userData?.id));
-      postWatchStreak(userDetails?.userDetails?.telegramId, parsedData1);
-    }
+    // if (
+    //   parsedData1 &&
+    //   parsedData1 !== 0 &&
+    //   parsedData1.watchSec > 180 &&
+    //   !parsedData1?.updated
+    // ) {
+    //   // postWatchStreak(String(userData?.id));
+    //   postWatchStreak(userDetails?.userDetails?.telegramId, parsedData1);
+    // }
 
     console.log(
       JSON.stringify(userDetails?.currentPhase) + "kjhfdfghjkhgfgfghkjhhg"
@@ -110,25 +110,27 @@ const Thememe = () => {
 
     const storedData1 = localStorage.getItem("watchStreak");
     const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
-
     if (
       parsedData1 &&
       parsedData1 !== 0 &&
-      parsedData1.watchSec > 180 &&
-      !parsedData1?.updated
+      parsedData1.watchSec > 180 
     ) {
-      postWatchStreak(String(userData?.id));
-      // postWatchStreak(data1.telegramId, parsedData1);
+      calculatedStreakDataInfo =    postWatchStreak(String(userData?.id));
+      // calculatedStreakDataInfo =  postWatchStreak(data1.telegramId, parsedData1);
     }
 
     const calculateReward = async () => {
+      let calculatedStreak;
       const data24 = {
         telegramId: String(userData?.id),
         // telegramId: data1.telegramId,
         userWatchSeconds: 0,
       };
       // Calculate streak data and update the state
-      const calculatedStreakData = await calculateStreak(data24);
+      if (parsedData1&&parsedData1?.watchSec < 180 ){
+       calculatedStreak = await calculateStreak(data24);
+      }
+      const calculatedStreakData = parsedData1&&parsedData1?.watchSec < 180 ?calculatedStreak:calculatedStreakDataInfo
       userDetails.userDetails.streakData = calculatedStreakData;
       if (
         calculatedStreakData.login &&
