@@ -11,7 +11,7 @@ import useUserInfo from "../../Hooks/useUserInfo";
 import { UserDeatils } from "../../apis/user";
 import Tv from "../Tv/Tv";
 
-const MarketPlace = () => {
+const MarketPlace = (props) => {
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
     useUserInfo();
   const [showPopup, setShowPopup] = useState(false);
@@ -26,7 +26,24 @@ const MarketPlace = () => {
     setCount(count + 1);
   };
 
+
+ useEffect(() => {
+  console.log(props?.isMarketOpen,'props?.isMarketOpen')
+  if (props?.isMarketOpen){
+    localStorage.setItem(
+      "pointDetails",
+      JSON.stringify({
+        tapPoints: 0,
+        watchSec: 0,
+        boosterPoints: 0,
+        booster: [0],
+      })
+    );
+  }
+  
+}, [props?.isMarketOpen]);
   const goToThePage = (component, name) => {
+    props?.setMarketOpen(false)
     updateUserInfo((prev) => ({
       ...prev,
       currentComponent: component,

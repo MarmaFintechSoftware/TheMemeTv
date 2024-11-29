@@ -28,29 +28,32 @@ import {
 import { addWatchSeconds, getUserDetails1 } from "../apis/user";
 import Spinner from "../Pages/Streak/Spinner"; // Import the spinner component
 import Battle from "./Battle/Battle";
+import disableDevtool from 'disable-devtool';
+
 
 const Thememe = () => {
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
     useUserInfo();
   const [isTutorial, setIsTutorial] = useState(true);
- let calculatedStreakDataInfo ;
+  // disableDevtool();
   const latestUserDetails = useRef(userDetails);
   const latestWatchScreen = useRef(watchScreen);
+  const [isMarketOpen,setMarketOpen]=useState(false);
 
   useEffect(() => {
     latestUserDetails.current = userDetails;
     latestWatchScreen.current = watchScreen;
     const storedData1 = localStorage.getItem("watchStreak");
     const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
-    // if (
-    //   parsedData1 &&
-    //   parsedData1 !== 0 &&
-    //   parsedData1.watchSec > 180 &&
-    //   !parsedData1?.updated
-    // ) {
-    //   // postWatchStreak(String(userData?.id));
-    //   postWatchStreak(userDetails?.userDetails?.telegramId, parsedData1);
-    // }
+    if (
+      parsedData1 &&
+      parsedData1 !== 0 &&
+      parsedData1.watchSec > 180 &&
+      !parsedData1?.updated
+    ) {
+      // postWatchStreak(String(userData?.id));
+      postWatchStreak(userDetails?.userDetails?.telegramId, parsedData1);
+    }
 
     console.log(
       JSON.stringify(userDetails?.currentPhase) + "kjhfdfghjkhgfgfghkjhhg"
@@ -110,29 +113,25 @@ const Thememe = () => {
 
     const storedData1 = localStorage.getItem("watchStreak");
     const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
+
     if (
       parsedData1 &&
       parsedData1 !== 0 &&
-      parsedData1.watchSec > 180 
+      parsedData1.watchSec > 180 &&
+      !parsedData1?.updated
     ) {
-      calculatedStreakDataInfo =    postWatchStreak(String(userData?.id));
-      // calculatedStreakDataInfo =  postWatchStreak(data1.telegramId, parsedData1);
+      postWatchStreak(String(userData?.id));
+      // postWatchStreak(data1.telegramId, parsedData1);
     }
 
     const calculateReward = async () => {
-      let calculatedStreak;
       const data24 = {
         telegramId: String(userData?.id),
         // telegramId: data1.telegramId,
         userWatchSeconds: 0,
       };
-      
       // Calculate streak data and update the state
-      if ((parsedData1&&parsedData1?.watchSec < 180) || (!parsedData1 ) ){
-       calculatedStreak = await calculateStreak(data24);
-      }
-      const calculatedStreakData = (  parsedData1&&parsedData1?.watchSec < 180 ) || (!parsedData1 )?calculatedStreak:calculatedStreakDataInfo;
-      
+      const calculatedStreakData = await calculateStreak(data24);
       userDetails.userDetails.streakData = calculatedStreakData;
       if (
         calculatedStreakData.login &&
@@ -536,30 +535,45 @@ const Thememe = () => {
       isLoading: true,
     }));
     const res = await addWatchSeconds(data);
-    localStorage.setItem(
-      "pointDetails",
-      JSON.stringify({
-        tapPoints: 0,
-        watchSec: 0,
-        boosterPoints: 0,
-        booster: [0],
-      })
-    );
-    updatewatchScreenInfo((prev) => ({
-      ...prev,
-      totalReward: res.totalRewards,
-      tapPoints: 0,
-      booster: false,
-      boosterSec: 0,
-      boosterPoints: 0,
-      boosterDetails: {},
-      watchSec: 0,
-      updatedWatchPoints: res?.watchRewards,
-    }));
+    
     if (res) {
+      setMarketOpen(true);
+      localStorage.setItem(
+        "pointDetails",
+        JSON.stringify({
+          tapPoints: 0,
+          watchSec: 0,
+          boosterPoints: 0,
+          booster: [0],
+        })
+      );
+      updatewatchScreenInfo((prev) => ({
+        ...prev,
+        totalReward: res.totalRewards,
+        tapPoints: 0,
+        booster: false,
+        boosterSec: 0,
+        boosterPoints: 0,
+        boosterDetails: {},
+        watchSec: 0,
+        updatedWatchPoints: res?.watchRewards,
+      }));
       goToThePage(marketPlace, "marketPlace");
     }
   };
+  const [onClick,setOnclick]=useState(false);
+  const GetStarted =()=>{
+    setOnclick(true);
+    // https://lu.ma/b2gvop48
+    if (
+      userDetails?.userDetails?.telegramId &&
+      !watchScreen.booster
+    ) {
+      goToThePage(Tv, "TVPage");
+      setOnclick(false);
+      // goToThePage(Battle, "BattlePage");
+    }
+  }
 
   return (
     <div
@@ -904,13 +918,7 @@ const Thememe = () => {
                     justifyContent: "center",
                   }}
                   onClick={() => {
-                    if (
-                      userDetails?.userDetails?.telegramId &&
-                      !watchScreen.booster
-                    ) {
-                      goToThePage(Tv, "TVPage");
-                      // goToThePage(Battle, "BattlePage");
-                    }
+                    GetStarted()
                   }}
                 >
                   <div
@@ -920,7 +928,7 @@ const Thememe = () => {
                       justifyContent: "center",
                     }}
                   >
-                    <img src={ContinueText} style={{ width: "90%" }} />
+                    <img src={ ContinueText} style={{ width: "90%" }} />
                   </div>
                 </div>
               ) : null}
@@ -1051,7 +1059,10 @@ const Thememe = () => {
               <div className="spinner"></div>
             </div>
           )}
-          {userDetails.currentComponent && <userDetails.currentComponent />}
+          {userDetails.currentComponent && <userDetails.currentComponent 
+          setMarketOpen={setMarketOpen}
+          isMarketOpen={isMarketOpen}
+          />}
         </div>
         <Tvborder />
       </div>

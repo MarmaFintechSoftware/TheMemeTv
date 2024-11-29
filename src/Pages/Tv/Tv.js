@@ -29,11 +29,8 @@ import ConnectWallet from "../ConnectWallet/ConnectWallet";
 import animepic from "../../assets/images/animepic.svg";
 import cancelIcon from "../../assets/Task/cancelicon.png";
 // import weekRewards from "../../apis/user/weekRewards";
-import { debounce } from "lodash";
 import wallet from "../../assets/images/wallet.svg";
 import DashedProgressBar from "../../components/dashedprogress/Dashedprogress";
-import twox from "../../assets/images/2X.png";
-import mask from "../../assets/images/mask.webp";
 
 const Tv = () => {
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
@@ -141,82 +138,48 @@ const Tv = () => {
       pauseCounter(); // Clear the interval when the component is unmounted
     };
   }, []);
-
   useEffect(() => {
-    // audioRef.current.loop = true;
-    // audioRef.current.volume = 0.1;
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        console.log("hidden");
+        console.log("Page hidden, clearing interval...");
         clearInterval(intervalRef.current);
-        // audioRef.current.pause();
       } else {
-        console.log("visible");
-        console.log("App is in the foreground, starting counter...");
-        const storedData1 = localStorage.getItem("watchStreak");
-        const parsedData1 = JSON.parse(storedData1);
-        const storedData = localStorage.getItem("energyDetails");
-
-        const parsedData = JSON.parse(storedData);
-        const storedDate = new Date(parsedData.date);
-
+        console.log("Page visible, starting interval...");
         intervalRef.current = setInterval(() => {
           localStorage.setItem(
             "pointDetails",
             JSON.stringify({
-              // totalReward: totalRewardPoints,
               tapPoints: tapPointsRef.current,
               watchSec: secsOnlyRef.current,
               boosterPoints: boosterPointsRef.current,
               booster: [watchScreenRef.current.boosterDetails.name],
             })
           );
-
-          localStorage.setItem(
-            "watchStreak",
-
-            JSON.stringify({
-              // totalReward: totalRewardPoints,
-
-              watchSec:
-                parsedData1 &&
-                parsedData1.date ===
-                  new Date(userDetails?.userDetails?.lastLogin).getDate()
-                  ? parsedData1?.watchSec + secsOnlyRef.current
-                  : secsOnlyRef.current,
-              // date: new Date(userDetails?.userDetails?.lastLogin).getDate(),
-              // date: new Date().getDate(),
-              date: new Date(userDetails?.userDetails?.lastLogin).getDate(),
-              updated: parsedData1?.updated ? parsedData1?.updated : false,
-            })
-          );
-
-          secsOnlyRef.current = secsOnlyRef.current + 1;
+  
+          secsOnlyRef.current += 1;
           if (energy.current < 5000) {
-            SetEnergy((prev) => {
-              return Number(prev) + 1;
-            });
-            energy.current = Number(energy.current) + 1;
+            SetEnergy((prev) => Number(prev) + 1);
+            energy.current += 1;
           }
-          const values = {
+  
+          const boosterValues = {
             levelUp: currentLevelRef.current + 1,
             "2x": currentLevelRef.current * 2,
             "3x": currentLevelRef.current * 3,
             "5x": currentLevelRef.current * 5,
           };
+  
           if (
-            watchScreenRef.current?.boosterDetails?.name === "levelUp" ||
-            watchScreenRef.current?.boosterDetails?.name === "2x" ||
-            watchScreenRef.current?.boosterDetails?.name === "3x" ||
-            watchScreenRef.current?.boosterDetails?.name === "5x"
+            ["levelUp", "2x", "3x", "5x"].includes(
+              watchScreenRef.current?.boosterDetails?.name
+            )
           ) {
+            const boosterName = watchScreenRef.current?.boosterDetails?.name;
             setBoosterPoints(
               (prevBoosterPoints) =>
-                prevBoosterPoints +
-                values[watchScreenRef.current?.boosterDetails?.name]
+                prevBoosterPoints + boosterValues[boosterName]
             );
-            boosterPointsRef.current +=
-              values[watchScreenRef.current?.boosterDetails?.name];
+            boosterPointsRef.current += boosterValues[boosterName];
           } else {
             setSecs((prevSecs) => {
               const newSecs = prevSecs + currentLevelRef.current;
@@ -225,28 +188,26 @@ const Tv = () => {
             });
           }
         }, 1000);
-        // audioRef.current.play();
       }
     };
-    // audioRef.current.play();
+  
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    // window.addEventListener("beforeunload", () => audioRef.current.pause());
-
-    const storedData = localStorage.getItem("tutorial");
-    const data = JSON.parse(storedData);
-    if (data && data.watched) {
-      updateUserInfo((prev) => ({
-        ...prev,
-        isTutorial: false,
-      }));
-    }
-
+    // const storedData = localStorage.getItem("tutorial");
+    // const data = JSON.parse(storedData);
+    // if (data && data.watched) {
+    //   updateUserInfo((prev) => ({
+    //     ...prev,
+    //     isTutorial: false,
+    //   }));
+    // }  
     return () => {
-      // Cleanup listeners and pause audio when the component unmounts
-      // document.removeEventListener("visibilitychange", handleVisibilityChange);
-      // audioRef.current.pause();
+      console.log("Cleanup: clearing interval and removing event listener");
+      clearInterval(intervalRef.current);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
+  
+  
 
   useEffect(() => {
     const storedData1 = localStorage.getItem("watchStreak");
