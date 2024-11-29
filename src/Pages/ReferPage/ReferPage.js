@@ -173,7 +173,7 @@ const ReferPage = () => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: "10px",
+              // marginBottom: "10px",
             }}
           >
             <h2

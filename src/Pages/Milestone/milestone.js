@@ -5,10 +5,23 @@ import Cup from "../../assets/images/cup.svg";
 import cancelIcon from "../../../src/assets/Task/cancelicon.png";
 import useUserInfo from "../../Hooks/useUserInfo";
 import Refer from "../ReferPage/ReferPage";
-
 const Milestone = () => {
   const { userDetails, updateUserInfo } = useUserInfo();
-
+  const MileItem = [
+   
+    {invite:'Invite 3 Friends', points:10000},
+    {invite:'Invite 5 Friends', points:16667},
+    {invite:'Invite 10 Friends', points:33333},
+    {invite:'Invite 20 Friends', points:66667},
+    {invite:'Invite 30 Friends', points:100000},
+    {invite:'Invite 40 Friends', points:133333},
+    {invite:'Invite 50 Friends', points:166667},
+    {invite:'Invite 60 Friends', points:200000},
+    {invite:'Invite 70 Friends', points:233333},
+    {invite:'Invite 80 Friends', points:266667},
+    {invite:'Invite 90 Friends', points:300000},
+    {invite:'Invite 100 Friends', points:333333},
+];
   const goToThePage = (component, name) => {
     updateUserInfo((prev) => ({
       ...prev,
@@ -49,212 +62,31 @@ const Milestone = () => {
           <hr style={{ margin: "10px", paddingBottom: "0px" }} />
         </p>
       </div> */}
-
       <div className="container scrollable" style={{ width: "320px" }}>
+      { MileItem.map((mile,index)=>
+              (
+                <>
         <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 3 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +10,000
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
+                 <div className="col-2" key={index}>
+                <img src={Cup} alt="milestone" className="image" />
+              </div>
+               <div className="col-9 stuff-text">
+               <h4>{mile.invite}</h4>
+           <p className="stuff-p">
+             <img src={logo} /> +&nbsp;{mile.points.toLocaleString()}
+           </p>
+         </div>
+          <div className="col-1">
+          {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
+            CLAIM
+          </button> */}
         </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 5 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +16,667
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
         </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 10 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +33,333
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 20 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +66,667
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 30 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +1,00,000
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 40 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +1,33,333
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 50 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +1,66,667
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 60 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +2,00,000
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 70 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +2,33,333
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 80 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +2,66,667
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 90 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +3,00,000
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
-
-        <div className="row mt10 cheap-stuff">
-          <div className="col-2">
-            <img src={Cup} alt="milestone" className="image" />
-          </div>
-          <div className="col-7 stuff-text">
-            <h4>INVITE 100 FRIENDS</h4>
-            <p className="stuff-p">
-              <img src={logo} /> +3,33,333
-            </p>
-          </div>
-          <div className="col-3">
-            {/* <button className="stuff-claim" style={{ cursor: "pointer" }}>
-              CLAIM
-            </button> */}
-          </div>
-        </div>
+                </>
+              )
+            )}
       </div>
     </div>
   );
 };
-
 export default Milestone;

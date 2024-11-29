@@ -192,14 +192,14 @@ const Tv = () => {
     };
   
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    // const storedData = localStorage.getItem("tutorial");
-    // const data = JSON.parse(storedData);
-    // if (data && data.watched) {
-    //   updateUserInfo((prev) => ({
-    //     ...prev,
-    //     isTutorial: false,
-    //   }));
-    // }  
+    const storedData = localStorage.getItem("tutorial");
+    const data = JSON.parse(storedData);
+    if (data && data.watched) {
+      updateUserInfo((prev) => ({
+        ...prev,
+        isTutorial: false,
+      }));
+    }  
     return () => {
       console.log("Cleanup: clearing interval and removing event listener");
       clearInterval(intervalRef.current);
@@ -210,12 +210,13 @@ const Tv = () => {
   
 
   useEffect(() => {
+   
+    
     const storedData1 = localStorage.getItem("watchStreak");
     const parsedData1 = JSON.parse(storedData1);
     const storedData = localStorage.getItem("energyDetails");
 
     const parsedData = JSON.parse(storedData);
-
     intervalRef.current = setInterval(() => {
       localStorage.setItem(
         "pointDetails",
@@ -227,7 +228,8 @@ const Tv = () => {
           booster: [watchScreenRef.current.boosterDetails.name],
         })
       );
-
+      const today = new Date();
+      const dateAlone = today.getDate();
       localStorage.setItem(
         "watchStreak",
 
@@ -235,8 +237,8 @@ const Tv = () => {
           // totalReward: totalRewardPoints,
 
           watchSec:
-            parsedData1 &&
-            parsedData1.date ===
+          // parsedData1.date
+          dateAlone ===
               new Date(userDetails?.userDetails?.lastLogin).getDate()
               ? parsedData1?.watchSec + secsOnlyRef.current
               : secsOnlyRef.current,
@@ -247,7 +249,8 @@ const Tv = () => {
         })
       );
 
-      secsOnlyRef.current = secsOnlyRef.current + 1;
+
+      secsOnlyRef.current += 1
       if (energy.current < 5000) {
         SetEnergy((prev) => {
           return Number(prev) + 1;

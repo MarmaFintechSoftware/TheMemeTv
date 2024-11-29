@@ -28,9 +28,9 @@
 .phase {
   width: 100%;
   padding: 5px;
-  border: 2px solid #313231;
+  /* border: 2px solid #313231; */
   border-radius: 5px;
-  max-height: 450px;
+  max-height:68vh;
   overflow: scroll;
 }
 .phase-text {
@@ -63,7 +63,7 @@
   margin: 0;
 }
 .stuff-body1 {
-  margin-bottom: 20%;
+  /* margin-bottom: 20%; */
   padding: 10px 50px;
 }
 .phase-stuff {

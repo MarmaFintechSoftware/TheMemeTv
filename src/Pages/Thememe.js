@@ -898,7 +898,7 @@ const Thememe = () => {
                         reclaimUserDetails();
                       }}
                       src={switchOnTv}
-                      style={{ width: "80%" }}
+                      style={{ width: "100%" }}
                     />
                   </div>
                 </div>
