@@ -1842,23 +1842,35 @@ const Tv = () => {
           <div
             className="floor"
             style={
-              watchScreen.booster
-                ? {
-                    position: "fixed",
-                    bottom: "15%",
-                    width: "100%",
-                    height: "96px",
-                    backgroundColor: "#670000",
-                  }
-                : {
-                    position: "fixed",
-                    bottom: "15%",
-                    width: "100%",
-                    height: "96px",
-                    backgroundColor: "#2800b8",
-                  }
+              // watchScreen.booster
+              //   ? {
+              //       position: "fixed",
+              //       bottom: "15%",
+              //       width: "100%",
+              //       height: "96px",
+              //       backgroundColor: "#670000",
+              //     }
+              //   :
+              {
+                position: "fixed",
+                bottom: "15%",
+                width: "100%",
+                height: "96px",
+                backgroundColor: !watchScreen.booster
+                  ? "#2800B8"
+                  : watchScreen.boosterDetails.name === "5x"
+                  ? "#670000"
+                  : watchScreen.boosterDetails.name === "2x"
+                  ? "rgb(0 44 137)"
+                  : watchScreen.boosterDetails.name === "3x"
+                  ? "#6E00A2"
+                  : watchScreen.boosterDetails.name === "levelUp"
+                  ? "rgb(0 57 0)"
+                  : "rgb(0 57 0)",
+              }
             }
           ></div>
+
           <div
             style={{
               position: "absolute",
@@ -1867,12 +1879,20 @@ const Tv = () => {
             {/* {watchScreen.boosterDetails.name === "5x" ? ( */}
             <>
               <div style={{ position: "relative" }}>
-                <img
+              <img
                   src={karathe}
                   className={
-                    watchScreen.booster
+                    !watchScreen.booster
+                      ? "woot-dance"
+                      : watchScreen.boosterDetails.name === "5x"
                       ? "woot-dance boosterfilter"
-                      : "woot-dance"
+                      : watchScreen.boosterDetails.name === "2x"
+                      ? "woot-dance boosterfilter1"
+                      : watchScreen.boosterDetails.name === "3x"
+                      ? "woot-dance boosterfilter2"
+                      : watchScreen.boosterDetails.name === "levelUp"
+                      ? "woot-dance boosterfilter3"
+                      : "woot-dance boosterfilter4"
                   }
                   width="328"
                   height="272"
