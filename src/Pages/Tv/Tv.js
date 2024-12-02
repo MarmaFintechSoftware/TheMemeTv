@@ -207,8 +207,6 @@ const Tv = () => {
     };
   }, []);
   
-  
-
   useEffect(() => {
    
     
@@ -216,7 +214,9 @@ const Tv = () => {
     const parsedData1 = JSON.parse(storedData1);
     const storedData = localStorage.getItem("energyDetails");
 
+
     const parsedData = JSON.parse(storedData);
+  
     intervalRef.current = setInterval(() => {
       localStorage.setItem(
         "pointDetails",
@@ -229,7 +229,7 @@ const Tv = () => {
         })
       );
       const today = new Date();
-      const dateAlone = today.getDate();
+      const dateAlone = today.getDate();   
       localStorage.setItem(
         "watchStreak",
 
@@ -237,8 +237,8 @@ const Tv = () => {
           // totalReward: totalRewardPoints,
 
           watchSec:
-          // parsedData1.date
-          dateAlone ===
+         parsedData1?.date ===
+          // dateAlone ===
               new Date(userDetails?.userDetails?.lastLogin).getDate()
               ? parsedData1?.watchSec + secsOnlyRef.current
               : secsOnlyRef.current,
