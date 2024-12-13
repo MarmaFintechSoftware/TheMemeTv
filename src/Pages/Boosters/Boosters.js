@@ -69,12 +69,12 @@ const Boosters = () => {
     //   content: <img src={boost5} alt="3" style={{ opacity: 1 }} />,
     // },
   ];
-
+  const IsTutorial = JSON.parse( localStorage.getItem("tutorialStatus"));
   return (
     <div
       className="menupointer"
       style={
-        userDetails?.isTutorial
+       !IsTutorial
           ? {
               height: "50%",
               width: "100%",

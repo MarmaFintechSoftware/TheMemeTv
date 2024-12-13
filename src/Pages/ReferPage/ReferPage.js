@@ -68,7 +68,22 @@ const ReferPage = () => {
       menuCount: userDetails?.userDetails?.menuCount + 1,
     }));
   };
-
+  const [showPopup, setShowPopup] = useState(false);
+  
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(
+        `https://t.me/the_meme_tv_bot?start=${userDetails?.userDetails?.refId}`
+      )
+      .then(() => {
+        setShowPopup(true); // Show the popup
+        setTimeout(() => setShowPopup(false), 2000); // Hide the popup after 3 seconds
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
+ 
   return (
     <div className="info-img menupointer">
       <img
@@ -148,6 +163,7 @@ const ReferPage = () => {
 
             <div className="col-4"></div>
           </div>
+     
 
           <table className="table table-dark">
             <tbody>
@@ -181,25 +197,22 @@ const ReferPage = () => {
                 shareToTelegram();
               }}
             >
-              invite Friends
+            {showPopup? "Link copied to Clipboard": " invite Friends"}
             </h2>
+          {!showPopup&&
             <div
-              onClick={() => {
-                navigator.clipboard
-                  .writeText(
-                    `https://t.me/the_meme_tv_bot?start=${userDetails?.userDetails?.refId}`
-                  )
-                  .then(() => {})
-                  .catch((err) => {
-                    console.error("Failed to copy text: ", err);
-                  });
-              }}
+              onClick={handleCopy}
             >
+              
               <img
                 src={copy}
                 style={{ marginLeft: "20px", marginBottom: "10px" }}
               />
+          
+    
             </div>
+}
+
 
             {/* <RWebShare
               data={{

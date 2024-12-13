@@ -22,6 +22,7 @@ import {
   taskStreakRewardClaim,
   multiStreakRewardClaim,
   streakOfStreakRewardClaim,
+  getUserDetails1,
 } from "../../apis/user";
 import { differenceInDays } from "date-fns";
 import fire from "../../assets/images/fire.svg";
@@ -201,7 +202,7 @@ const Streak = () => {
   }, [currentDay]);
 
   //function to check day cnd change the day, if they start in a middle day
-  const dayCheck = async (n) => {
+ const dayCheck = async (n) => {
     setNormalDay(n);
     const dayCount = n - startDay;
     if (dayCount == 0) {
@@ -223,7 +224,7 @@ const Streak = () => {
       setDay(6);
       dayRef.current = 6;
     }
-  };
+  }; 
 
   //function to calculate day reward
   const calculateReward = async () => {
@@ -626,18 +627,52 @@ const Streak = () => {
       }));
     }, 1000);
   }, []);
-
+  const getUserDetailsOnly = async () => {
+    let userDetails1;
+    try {
+      userDetails1 = await getUserDetails1(
+        userDetails?.userDetails?.telegramId
+      );
+    } catch (error) {
+      console.error("Error in updating or fetching user details:", error);
+    }
+    // Update state after both async calls are completed
+    if (userDetails) {
+      updateUserInfo((prev) => ({
+        ...prev,
+        userDetails: userDetails1,
+      }));
+      updatewatchScreenInfo((prev) => ({
+        ...prev,
+        boostersList: userDetails1?.boosters,
+        totalReward: userDetails1?.totalRewards,
+        tapPoints: 0,
+        booster: false,
+        boosterSec: 0,
+        boosterPoints: 0,
+        boosterDetails: {},
+        watchSec: 0,
+      }));
+    }
+    return userDetails;
+  };
   const toogleMenu = () => {
-    updateUserInfo((prev) => ({
+    
+    if (!watchScreen.booster) {
+      const data = getUserDetailsOnly().then(() => {
+updateUserInfo((prev) => ({
       ...prev,
       isPlay: false,
       currentComponent: Tv,
       currentComponentText: "TVPage",
       lastComponent: userDetails?.userDetails.currentComponent,
       lastComponentText: userDetails?.userDetails.currentComponentText,
-      isMenu: true,
+      isMenu: false,
       menuCount: userDetails?.userDetails?.menuCount + 1,
     }));
+        // goToThePage(Battle, "BattlePage");
+      });
+    }
   };
 
   return (
@@ -1109,7 +1144,7 @@ const Streak = () => {
                     : memoizedCurrentDay === day + memoizedStartDay - 1
                     ? memoizedMultiStreakReward > 0
                       ? "CLAIM"
-                      : "GO"
+                      : "CLAIM"
                     : memoizedMultiStreakReward > 0
                     ? "CLAIM"
                     : "LOCKED"}

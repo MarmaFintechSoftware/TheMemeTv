@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import stakelogo from "../../assets/images/stake-logo.svg";
 import logo from "../../assets/images/main-logo.svg";
 import "./PhasePage.css";
-import { weekRewards, stakeRewards } from "../../apis/user";
+import { weekRewards, stakeRewards, getUserDetails1 } from "../../apis/user";
 import useUserInfo from "../../Hooks/useUserInfo";
 import Menu from "../menu/menu";
 import Tv from "../Tv/Tv";
 import cancelIcon from "../../assets/Task/cancelicon.png";
 
 const PhasePage = () => {
-  const { userDetails, updateUserInfo } = useUserInfo();
+  const { watchScreen,userDetails, updateUserInfo,updatewatchScreenInfo } = useUserInfo();
   const [currentLevel, setCurrentLevel] = useState(userDetails?.currentPhase);
   const [TotalRewards, setTotalRewards] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +34,7 @@ const PhasePage = () => {
     9: "week9",
     10: "week10",
   };
+ 
 
   const getWeeklyRewardsData = async () => {
     const data = {
@@ -74,33 +75,79 @@ const PhasePage = () => {
   }, [stakeDetails, currentLevel]);
 
   useEffect(() => {
-    const value = currentStake?.rewardsForWeek?.reduce((acc, item) => {
-      return item.userStaking ? acc + item.totalRewards : acc;
-    }, 0);
+    // const value = currentStake?.rewardsForWeek?.reduce((acc, item) => {
+    //   return item.userStaking ? acc + item.totalRewards : acc;
+    // }, 0);
 
-    setTotalRewards(value);
+    const FilterStake = currentStake?.rewardsForWeek?.filter((el)=>el?.userStaking==true);
+    const totalRewardsSum = FilterStake?.reduce((sum, item) => sum + item.totalRewards, 0);
+    setTotalRewards(totalRewardsSum/2);
   }, [currentStake]);
 
-  const updateStakeRewards = (id) => {
+  const updateStakeRewards = (id) => { 
     const res = stakeRewards({ stakingId: String(id) });
     if (res) {
       setTimeout(() => {
         getWeeklyRewardsData();
       }, 1500);
     }
+    const FilterStake = currentStake?.rewardsForWeek?.filter((el)=>el?.userStaking==true);
+    const totalRewardsSum = FilterStake?.reduce((sum, item) => sum + item.totalRewards, 0);
+    setTotalRewards(totalRewardsSum/2);
+  };
+   
+  const getUserDetailsOnly = async () => {
+    let userDetails1;
+    try {
+      userDetails1 = await getUserDetails1(
+        userDetails?.userDetails?.telegramId
+      );
+    } catch (error) {
+      console.error("Error in updating or fetching user details:", error);
+    }
+    // Update state after both async calls are completed
+    if (userDetails) {
+      updateUserInfo((prev) => ({
+        ...prev,
+        userDetails: userDetails1,
+      }));
+      updatewatchScreenInfo((prev) => ({
+        ...prev,
+        boostersList: userDetails1?.boosters,
+        totalReward: userDetails1?.totalRewards,
+        tapPoints: 0,
+        booster: false,
+        boosterSec: 0,
+        boosterPoints: 0,
+        boosterDetails: {},
+        watchSec: 0,
+      }));
+    }
+    return userDetails;
   };
   const toogleMenu = () => {
-    updateUserInfo((prev) => ({
-      ...prev,
-      isPlay: false,
-      currentComponent: Tv,
-      currentComponentText: "TVPage",
-      lastComponent: userDetails?.userDetails.currentComponent,
-      lastComponentText: userDetails?.userDetails.currentComponentText,
-      isMenu: true,
-      menuCount: userDetails?.userDetails?.menuCount + 1,
-    }));
+
+      if (!watchScreen.booster) {
+        const data = getUserDetailsOnly().then(() => {
+          updateUserInfo((prev) => ({
+            ...prev,
+            isPlay: false,
+            currentComponent: Tv,
+            currentComponentText: "TVPage",
+            lastComponent: userDetails?.userDetails.currentComponent,
+            lastComponentText: userDetails?.userDetails.currentComponentText,
+            isMenu: true,
+            menuCount: userDetails?.userDetails?.menuCount + 1,
+          }));
+          // goToThePage(Battle, "BattlePage");
+        });
+      }
+    
+   
+    
   };
+  const FindDate = new Date();
+  const formattedDate = FindDate?.toISOString().split("T")[0];
   return (
     <>
       {isLoading ? (
@@ -139,7 +186,7 @@ const PhasePage = () => {
               class={currentLevel > 1 ? "arrows prevact" : "arrows prev"}
             ></div>
             <div
-              class="arrows next"
+              class={currentLevel ==10?'':`arrows next`}
               onClick={() => {
                 if (currentLevel < 10) {
                   setCurrentLevel(currentLevel + 1);
@@ -176,9 +223,11 @@ const PhasePage = () => {
               {currentStake?.rewardsForWeek?.map((item, index) => {
                 return (
                   <div
-                    className="row mt10 phase-stuff"
-                    style={{ width: "100%" }}
-                  >
+                  className={`row mt10  phase-stuff ${
+                    formattedDate == item?.date ? "phase-stuff-border" : ""
+                  } `}
+                  style={{ width: "100%" }}
+                >
                     <div className="col-2">
                       <div>
                         <h2 className="stake-days">

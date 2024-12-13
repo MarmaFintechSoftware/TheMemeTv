@@ -141,7 +141,7 @@ const MarketPlace = (props) => {
       setCount(1);
       getUserDetails();
     } else {
-      setErr("Not Enough watch points");
+      setErr("Not Enough Total points!");
       timeoutRef.current = setTimeout(() => {
         setCount(1);
         setShowPopup(false);
@@ -370,11 +370,11 @@ const MarketPlace = (props) => {
                     purchaseCards();
                   }}
                   className="btn-reward1"
-                  style={err === "" ? {} : { color: "red" }}
+                  style={err === "" ? {} : { color: "white" }}
                 >
                   {err === ""
                     ? selected.price * count
-                    : "Not Enough Watch Points"}
+                    : "Not Enough Total Points!"}
                 </button>
                 {/* <button className="btn-reward">Free Pick</button> */}
               </>

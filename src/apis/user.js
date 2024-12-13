@@ -4,7 +4,8 @@ import { Base_Url } from "./baseurl";
 export const UserDeatils = async (data) => {
   try {
     const response = await axios.post(`${Base_Url.base_url}/login`, data);
-    return response.data;
+    localStorage.setItem("tutorialStatus",JSON.stringify(response?.data?.user?.tutorialStatus))
+    return response?.data;
   } catch (err) {
     console.log(err);
   }
@@ -284,6 +285,19 @@ export const userWalletAddress = async (telegramId, data) => {
   }
 };
 
+export const TutorialUpdate = async (telegramId, data) => {
+  try {
+    const response = await axios.post(
+      `${Base_Url.base_url}/tutorialStatus/${telegramId}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 export default {
   UserDeatils,
   addWatchSeconds,
@@ -306,4 +320,5 @@ export default {
   cheapStuff,
   getUserDetails1,
   userWalletAddress,
+  TutorialUpdate
 };

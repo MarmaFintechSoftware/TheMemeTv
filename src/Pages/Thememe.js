@@ -29,37 +29,47 @@ import { addWatchSeconds, getUserDetails1 } from "../apis/user";
 import Spinner from "../Pages/Streak/Spinner"; // Import the spinner component
 import Battle from "./Battle/Battle";
 import disableDevtool from 'disable-devtool';
-
+let userData;
 
 const Thememe = () => {
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
     useUserInfo();
-  const [isTutorial, setIsTutorial] = useState(true);
+    const IsTutorial = JSON.parse( localStorage.getItem("tutorialStatus"));
   // disableDevtool();
   const latestUserDetails = useRef(userDetails);
   const latestWatchScreen = useRef(watchScreen);
   const [isMarketOpen,setMarketOpen]=useState(false);
-
+  const storedData1 = localStorage.getItem("watchStreak");
+    const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
+    const [openWhileBooster,setOpenWhileBooster]=useState(false);
   useEffect(() => {
     latestUserDetails.current = userDetails;
     latestWatchScreen.current = watchScreen;
-    const storedData1 = localStorage.getItem("watchStreak");
-    const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
-    if (
-      parsedData1 &&
-      parsedData1 !== 0 &&
-      parsedData1.watchSec > 180 &&
-      !parsedData1?.updated
-    ) {
-      // postWatchStreak(String(userData?.id));
-      postWatchStreak(userDetails?.userDetails?.telegramId, parsedData1);
-    }
+  
+   
+
 
     console.log(
       JSON.stringify(userDetails?.currentPhase) + "kjhfdfghjkhgfgfghkjhhg"
     );
   }, [userDetails, watchScreen]);
+  const [watchSec, setWatchSec] = useState(parsedData1?.watchSec || 0);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const storedData = localStorage.getItem("watchStreak");
+      const parsedData = storedData ? JSON.parse(storedData) : {};
+      
+      if (parsedData.watchSec && parsedData.watchSec !== watchSec) {
+        setWatchSec(parsedData.watchSec); // Update state when localStorage changes
+      }
+    }, 1000); // Check every 1 second
+  
+    return () => clearInterval(interval); // Cleanup the interval
+  }, [watchSec]);
+  
+
+  
   useEffect(() => {
     const data = localStorage.getItem("tutorial");
     const parsedData = JSON.parse(data);
@@ -79,7 +89,7 @@ const Thememe = () => {
   useEffect(() => {
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
-    const userData = window.Telegram.WebApp.initDataUnsafe.user;
+     userData = window.Telegram.WebApp.initDataUnsafe.user;
     const urlParams = new URLSearchParams(window.location.search);
     const referredIdFromUrl = urlParams.get("start");
 
@@ -105,29 +115,30 @@ const Thememe = () => {
         telegramDetails: userData,
       }));
     }
-    // const data1 = {
-    //   name: "Karthikeyan",
-    //   telegramId: "62655jln9lugkyu18",
-    // };
-    // getUserDetails(data1);
+    const data1 = {
+      name: "Karthikeyan",
+      telegramId: "62655jln9lugkyu18",
+    };
+   if (!userData){
+    getUserDetails(data1);
+   }
 
     const storedData1 = localStorage.getItem("watchStreak");
     const parsedData1 = storedData1 ? JSON.parse(storedData1) : 0;
-
-    if (
-      parsedData1 &&
-      parsedData1 !== 0 &&
-      parsedData1.watchSec > 180 &&
-      !parsedData1?.updated
-    ) {
-      postWatchStreak(String(userData?.id));
-      // postWatchStreak(data1.telegramId, parsedData1);
-    }
-
+   
+    // if (
+    //   parsedData1 &&
+    //   parsedData1 !== 0 &&
+    //   parsedData1.watchSec > 180 &&
+    //   !parsedData1?.updated
+    // ) {
+    //   postWatchStreak(WatchStreakVal1, WatchStreakVal2);
+    // }
+    const WatchStreakVal1 = userData ? String(userData?.id) : "62655jln9lugkyu18";
+    const WatchStreakVal2 = userData ? "" :parsedData1;
     const calculateReward = async () => {
       const data24 = {
-        telegramId: String(userData?.id),
-        // telegramId: data1.telegramId,
+        telegramId:WatchStreakVal1,
         userWatchSeconds: 0,
       };
       // Calculate streak data and update the state
@@ -149,13 +160,20 @@ const Thememe = () => {
     };
     calculateReward();
   }, []);
+  const WatchStreakValu1 = userData ? String(userData?.id) : "62655jln9lugkyu18";
+  const WatchStreakValu2 = userData ? "" :parsedData1;
+  useEffect(() => {
+    if (watchSec == 180 && !parsedData1?.updated) {
+      postWatchStreak(WatchStreakValu1, WatchStreakValu2);
+    }
+  }, [watchSec, parsedData1?.updated]);
 
   const postWatchStreak = async (id, parsedData1) => {
     // console.log("jhgfdsdfghj");
     const calculatedStreakData = await calculateStreak({
       telegramId: id,
       userWatchSeconds: 180,
-    });
+    });    
     if (calculatedStreakData) {
       localStorage.setItem(
         "watchStreak",
@@ -549,7 +567,7 @@ const Thememe = () => {
       );
       updatewatchScreenInfo((prev) => ({
         ...prev,
-        totalReward: res.totalRewards,
+        totalReward: res?.totalRewards,
         tapPoints: 0,
         booster: false,
         boosterSec: 0,
@@ -574,6 +592,7 @@ const Thememe = () => {
       // goToThePage(Battle, "BattlePage");
     }
   }
+
 
   return (
     <div
@@ -643,7 +662,7 @@ const Thememe = () => {
               <div
                 // className="pulse-image"
                 style={
-                  userDetails?.isTutorial &&
+                  !IsTutorial &&
                   userDetails.currentComponentText === "TVPage"
                     ? {
                         position: "absolute",
@@ -657,7 +676,7 @@ const Thememe = () => {
                   if (
                     !watchScreen.booster &&
                     userDetails.currentComponentText !== "IntroImg" &&
-                    !userDetails?.isTutorial
+                    IsTutorial
                   ) {
                     toogleMenu();
                   }
@@ -667,14 +686,14 @@ const Thememe = () => {
                   src={bottomLeft}
                   alt="border"
                   style={
-                    userDetails?.isTutorial
+                    !IsTutorial
                       ? { height: "100%", width: "100%", opacity: 0.5 }
                       : { height: "100%", width: "100%" }
                   }
                   className="bottomImg"
                 />
               </div>
-              {userDetails?.isTutorial &&
+              {!IsTutorial &&
               userDetails.currentComponentText === "TVPage" ? (
                 <div
                   style={{
@@ -705,9 +724,12 @@ const Thememe = () => {
                   if (
                     !watchScreen.booster &&
                     userDetails.currentComponentText !== "IntroImg" &&
-                    !userDetails?.isTutorial
+                    IsTutorial
                   ) {
                     toogleMenu();
+                  }
+                  else {
+                    setOpenWhileBooster(true);
                   }
                 }}
                 style={{
@@ -840,7 +862,7 @@ const Thememe = () => {
                     justifyContent: "center",
                   }}
                 >
-                  {userDetails?.isTutorial ? (
+                  {!IsTutorial ? (
                     <div
                       style={{
                         position: "absolute",
@@ -950,7 +972,7 @@ const Thememe = () => {
                 if (
                   !watchScreen?.booster &&
                   userDetails.currentComponentText !== "IntroImg" &&
-                  !userDetails?.isTutorial
+                  IsTutorial
                 ) {
                   const values = JSON.parse(
                     localStorage.getItem("pointDetails")
@@ -963,11 +985,14 @@ const Thememe = () => {
                   addWatchSecapiMarket(data);
                   // goToTheRefererPage(ReferPage, "ReferPage");
                 }
+                else {
+                  setOpenWhileBooster(true);
+                }
               }}
             >
               <div
                 style={
-                  userDetails?.isTutorial &&
+                  !IsTutorial &&
                   userDetails.currentComponentText === "TVPage"
                     ? {
                         position: "absolute",
@@ -1004,7 +1029,7 @@ const Thememe = () => {
                 />
               </div>
 
-              {userDetails?.isTutorial &&
+              {!IsTutorial &&
               userDetails.currentComponentText === "TVPage" ? (
                 <div
                   style={{
@@ -1062,6 +1087,8 @@ const Thememe = () => {
           {userDetails.currentComponent && <userDetails.currentComponent 
           setMarketOpen={setMarketOpen}
           isMarketOpen={isMarketOpen}
+          openWhileBooster={openWhileBooster}
+          setOpenWhileBooster={setOpenWhileBooster}
           />}
         </div>
         <Tvborder />

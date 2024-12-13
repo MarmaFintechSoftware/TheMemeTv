@@ -6,14 +6,13 @@ import logo from "../../assets/images/meme-logo.svg";
 import youtube from "../../assets/images/youtube.svg";
 import telegram from "../../assets/images/telegram.svg";
 import dobottom from "../../assets/images/stuff.gif";
-import { cheapStuff } from "../../apis/user";
+import { cheapStuff, getUserDetails1 } from "../../apis/user";
 import useUserInfo from "../../Hooks/useUserInfo";
 import cancelIcon from "../../assets/Task/cancelicon.png";
 import Tv from "../Tv/Tv";
 
 const DoEarn = () => {
-  const { userDetails, updateUserInfo } = useUserInfo();
-
+  const { watchScreen,userDetails, updateUserInfo,updatewatchScreenInfo } = useUserInfo();
   const [xchannel, setXchannel] = useState(localStorage.getItem("xchannel"));
   const [xchannelvalid, setXchannelValid] = useState(false);
   const [ychannel, setYchannel] = useState(localStorage.getItem("ychannel"));
@@ -24,7 +23,7 @@ const DoEarn = () => {
   const joinXChannel = () => {
     localStorage.setItem("xchannel", new Date());
     setXchannel(new Date());
-    window.open("https://x.com/CoinDiaryApp", "_blank");
+    window.open("https://x.com/thememe_tv/", "_blank");
   };
 
   const joinYChannel = () => {
@@ -118,9 +117,40 @@ const DoEarn = () => {
       setYchannelValid("claimed");
     }
   }, []);
-
+  const getUserDetailsOnly = async () => {
+    let userDetails1;
+    try {
+      userDetails1 = await getUserDetails1(
+        userDetails?.userDetails?.telegramId
+      );
+    } catch (error) {
+      console.error("Error in updating or fetching user details:", error);
+    }
+    // Update state after both async calls are completed
+    if (userDetails) {
+      updateUserInfo((prev) => ({
+        ...prev,
+        userDetails: userDetails1,
+      }));
+      updatewatchScreenInfo((prev) => ({
+        ...prev,
+        boostersList: userDetails1?.boosters,
+        totalReward: userDetails1?.totalRewards,
+        tapPoints: 0,
+        booster: false,
+        boosterSec: 0,
+        boosterPoints: 0,
+        boosterDetails: {},
+        watchSec: 0,
+      }));
+    }
+    return userDetails;
+  };
   const toogleMenu = () => {
-    updateUserInfo((prev) => ({
+    
+    if (!watchScreen.booster) {
+      const data = getUserDetailsOnly().then(() => {
+updateUserInfo((prev) => ({
       ...prev,
       isPlay: false,
       currentComponent: Tv,
@@ -130,6 +160,9 @@ const DoEarn = () => {
       isMenu: false,
       menuCount: userDetails?.userDetails?.menuCount + 1,
     }));
+        // goToThePage(Battle, "BattlePage");
+      });
+    }
   };
 
   return (

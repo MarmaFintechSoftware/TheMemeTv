@@ -1,3 +1,13 @@
+@media only screen and (max-height:620px)
+{
+  .cheap-stuff-container
+  {
+    height: 35vh !important;
+    overflow-y: scroll;
+  }
+}
+
+
 .carousel-container {
   position: relative;
   width: 80%;

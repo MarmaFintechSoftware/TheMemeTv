@@ -8,7 +8,7 @@ import useUserInfo from "../../Hooks/useUserInfo";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import marketPlack from "../../assets/images/marketPlace.svg";
 import leaderBoarder from "../../assets/images/leaderBoard.svg";
-import { addWatchSeconds } from "../../apis/user";
+import { addWatchSeconds, TutorialUpdate } from "../../apis/user";
 import { UserDeatils } from "../../apis/user";
 import marketPlace from "../MarketPlace/marketPlace";
 import TotalPoints from "../TotalPoints/TotalPoints";
@@ -32,13 +32,18 @@ import cancelIcon from "../../assets/Task/cancelicon.png";
 import wallet from "../../assets/images/wallet.svg";
 import DashedProgressBar from "../../components/dashedprogress/Dashedprogress";
 
-const Tv = () => {
+const Tv = (props) => {
+
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
     useUserInfo();
   const [secs, setSecs] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(
     userDetails.userDetails?.level
   );
+ const IsTutorial =JSON.parse( localStorage.getItem("tutorialStatus"));
+ console.log(typeof(IsTutorial),'IsTutorial');
+ 
+
   const watchScreenRef = useRef(watchScreen);
   const currentLevelRef = useRef(userDetails.userDetails?.level);
 
@@ -66,12 +71,17 @@ const Tv = () => {
       // Automatically hide instructions after 3 seconds (3000 milliseconds)
       setTimeout(() => {
         setShowInstructions(false);
+        props?.setOpenWhileBooster(false);
       }, 3000);
     }
   };
+ 
 
   useEffect(() => {
     console.log(JSON.stringify(watchScreen.booster) + "watchScreenwatchScreen");
+    if (props?.openWhileBooster){
+      handleClick();
+    }
     // Function to start the counter
     // const startCounter = () => {
     //   if (!intervalRef.current) {
@@ -104,7 +114,7 @@ const Tv = () => {
       // window.removeEventListener("blur", pauseCounter);
       // pauseCounter(); // Clear the interval when the component is unmounted
     };
-  }, [watchScreen]);
+  }, [watchScreen,props?.openWhileBooster]);
 
   useEffect(() => {
     // Function to start the counter
@@ -276,7 +286,8 @@ const Tv = () => {
         );
         boosterPointsRef.current +=
           values[watchScreenRef.current?.boosterDetails?.name];
-      } else {
+      }
+       else {
         setSecs((prevSecs) => {
           const newSecs = prevSecs + currentLevelRef.current;
           secsRef.current = newSecs;
@@ -453,7 +464,7 @@ const Tv = () => {
     );
     updatewatchScreenInfo((prev) => ({
       ...prev,
-      totalReward: res.totalRewards,
+      totalReward: res?.totalRewards,
       tapPoints: 0,
       booster: false,
       boosterSec: 0,
@@ -477,7 +488,7 @@ const Tv = () => {
     );
     updatewatchScreenInfo((prev) => ({
       ...prev,
-      totalReward: res.totalRewards,
+      totalReward: res?.totalRewards,
       tapPoints: 0,
       booster: false,
       boosterSec: 0,
@@ -514,7 +525,7 @@ const Tv = () => {
       boosterDetails: {},
       watchSec: 0,
       updatedWatchPoints: res?.watchRewards,
-      allrewards: res.totalRewards,
+      allrewards: res?.totalRewards,
     }));
     if (res) {
       setTimeout(() => {
@@ -524,6 +535,7 @@ const Tv = () => {
   };
 
   const addWatchSecapiStreak = async (data) => {
+    
     setIsLoading(true);
     clearInterval(intervalRef.current);
     const res = await addWatchSeconds(data);
@@ -546,7 +558,7 @@ const Tv = () => {
       boosterDetails: {},
       watchSec: 0,
       updatedWatchPoints: res?.watchRewards,
-      allrewards: res.totalRewards,
+      allrewards: res?.totalRewards,
     }));
     if (res) {
       setTimeout(() => {
@@ -596,6 +608,11 @@ const Tv = () => {
       // centerCount: userDetails.centerCount + 1,
       isTutorial: true,
     }));
+    localStorage.setItem(
+      "tutorialStatus",
+     false
+    );
+    
 
     // setIsTutorial(true);
   };
@@ -633,7 +650,7 @@ const Tv = () => {
       boosterDetails: {},
       watchSec: 0,
       updatedWatchPoints: res?.watchRewards,
-      allrewards: res.totalRewards,
+      allrewards: res?.totalRewards,
     }));
     if (res) {
       setTimeout(() => {
@@ -643,6 +660,7 @@ const Tv = () => {
   };
 
   const addWatchSecapirefer = async (data) => {
+
     setIsLoading(true);
     clearInterval(intervalRef.current);
     const res = await addWatchSeconds(data);
@@ -665,7 +683,7 @@ const Tv = () => {
       boosterDetails: {},
       watchSec: 0,
       updatedWatchPoints: res?.watchRewards,
-      allrewards: res.totalRewards,
+      allrewards: res?.totalRewards,
     }));
     if (res) {
       setTimeout(() => {
@@ -697,7 +715,7 @@ const Tv = () => {
       boosterDetails: {},
       watchSec: 0,
       updatedWatchPoints: res?.watchRewards,
-      allrewards: res.totalRewards,
+      allrewards: res?.totalRewards,
     }));
     if (res) {
       setTimeout(() => {
@@ -863,72 +881,72 @@ const Tv = () => {
   //   }
   // };
 
+
   const handleTap = (e) => {
     if (energy.current <= 5) return;
     if (navigator.vibrate) {
-      navigator.vibrate(50);
+     navigator.vibrate(50);
     }
     // tapSound.play();
-
     // Extract touch points or use mouse event coordinates
     const touches = e.touches
-      ? Array.from(e.touches)
-      : [{ clientX: e.clientX, clientY: e.clientY }];
-
-    // Define the base points per tap
-    const basePoints =
-      watchScreen?.boosterDetails?.name === "tap" && watchScreen?.booster
-        ? 10
-        : 5;
-
-    // Calculate tap points based on energy left
-    if (energyy > 0) {
-      const totalPoints = Math.min(energyy, basePoints * touches.length);
-
-      // Update tap points
-      setTapPoints((prevTapPoints) => {
+     ? Array.from(e.touches)
+     : [{ clientX: e.clientX, clientY: e.clientY }];
+     // Determine if the event is from a touch or mouse
+     let num = 5;
+     const basePoints =
+     watchScreen?.boosterDetails?.name === "tap" && watchScreen?.booster
+      ? 10
+      : 5;
+      if (watchScreen?.boosterDetails?.name === "tap" && watchScreen?.booster) {
+      num = 10;
+      setBoosterPoints((prevBoosterPoints) => {
+       const newBoosterPoints = prevBoosterPoints + basePoints * touches.length;
+       boosterPointsRef.current = newBoosterPoints ;
+       return newBoosterPoints ;
+      });
+     } else {
+      if (energyy > 0) {
+       const totalPoints = Math.min(energyy, basePoints * touches.length);
+       setTapPoints((prevTapPoints) => {
         const newTapPoints = prevTapPoints + totalPoints;
         tapPointsRef.current = newTapPoints;
         return newTapPoints;
-      });
-
-      // Update energy
-      SetEnergy((prevEnergy) => {
+       });
+       SetEnergy((prevEnergy) => {
         const newEnergy = prevEnergy - totalPoints;
         energy.current = newEnergy;
         localStorage.setItem(
-          "energyDetails",
-          JSON.stringify({ energy: newEnergy, date: new Date() })
+         "energyDetails",
+         JSON.stringify({ energy: newEnergy, date: new Date() })
         );
         return newEnergy;
-      });
-    }
-
-    // Apply booster points if booster is active
-    if (basePoints === 10) {
-      setBoosterPoints((prevBoosterPoints) => {
-        const newBoosterPoints =
-          prevBoosterPoints + basePoints * touches.length;
-        boosterPointsRef.current = newBoosterPoints;
-        return newBoosterPoints;
-      });
-    }
-
-    // Optional animation handling (uncomment if needed)
-    const newAnimations = touches.map((touch) => ({
+       });
+      }
+     }
+     // if (basePoints === 10) {
+     //  setBoosterPoints((prevBoosterPoints) => {
+     //   const newBoosterPoints =
+     //    prevBoosterPoints + basePoints * touches.length;
+     //   boosterPointsRef.current = newBoosterPoints;
+     //   return newBoosterPoints;
+     //  });
+     // }
+       // Optional animation handling (uncomment if needed)
+      const newAnimations = touches.map((touch) => ({
       id: Date.now() + Math.random(),
       x: touch.clientX,
       y: touch.clientY,
-    }));
-    setTapAnimations((prev) => [...prev, ...newAnimations]);
-    setTimeout(() => {
+     }));
+     setTapAnimations((prev) => [...prev, ...newAnimations]);
+     setTimeout(() => {
       setTapAnimations((prev) =>
-        prev.filter((animation) => !newAnimations.includes(animation))
+       prev.filter((animation) => !newAnimations.includes(animation))
       );
-    }, 1000);
-  };
-
-  // const handleTap = debounce((e) => {
+     }, 1000);
+    }  
+  
+ // const handleTap = debounce((e) => {
   //   if (energy.current > 5) {
   //     if (navigator.vibrate) {
   //       navigator.vibrate(100);
@@ -987,12 +1005,34 @@ const Tv = () => {
   //   }
   // });
 
+  const CloseTutorial = async ()=>{
+    const data = {
+      tutorialStatus: true,
+    };
+    const response = await TutorialUpdate(userDetails?.userDetails?.telegramId,data);
+    updateUserInfo((prev) => ({
+      ...prev,
+      isTutorial: false,
+    }));
+
+    localStorage.setItem(
+      "tutorial",
+      JSON.stringify({
+        watched: true,
+      })
+    );
+    localStorage.setItem(
+      "tutorialStatus",
+     true
+    );
+    
+  }
   return (
     <div
       className="tvContainer menupointer"
       style={{ height: "100%", width: "100%" }}
     >
-      {userDetails.isTutorial ? (
+      {!IsTutorial ? (
         <div
           className="tutorial"
           style={{
@@ -1016,7 +1056,7 @@ const Tv = () => {
                   {formatNumber(
                     Number(watchScreen.totalReward) +
                       Number(secs) +
-                      Number(tapPoints) +
+                      Number(tapPoints)  + 
                       Number(boosterPoints)
                   )}
                   /{formatNumber(level[currentLevel + 1])}
@@ -1140,6 +1180,7 @@ const Tv = () => {
                       ...prev,
                       tutorialText: "ABOUT THEMEMETV - HOW IT WORKS",
                     }));
+                  
                   }}
                   style={{ position: "absolute", top: -25, left: -10 }}
                 >
@@ -1432,17 +1473,7 @@ const Tv = () => {
               // setIsTutorial(false);
 
               // setIsTutorial(false);
-              updateUserInfo((prev) => ({
-                ...prev,
-                isTutorial: false,
-              }));
-
-              localStorage.setItem(
-                "tutorial",
-                JSON.stringify({
-                  watched: true,
-                })
-              );
+              CloseTutorial()
             }}
             style={{
               position: "absolute",
