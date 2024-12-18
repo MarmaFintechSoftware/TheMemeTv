@@ -1581,7 +1581,7 @@ const ScrambleaWordPlay = ({ day }) => {
   const nextScramble = () => {
     var gamePoints;
     if (!isChecked) {
-      setMessage("** Please check the word first **");
+      setMessage("** Enter a valid word **");
       setMessageColor("red");
       return;
     }

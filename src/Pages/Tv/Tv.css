@@ -13,6 +13,10 @@
 .mb10 {
   margin-bottom: 15%;
 }
+.stuffbody1
+{
+  padding: 2px 35px;
+}
 @media only screen and (max-height: 778px) {
   .streakBreakPointsContainer {
     margin-top: 10%;
@@ -39,6 +43,88 @@
     overflow-y: auto;
     width: 100%;
     margin-bottom: 10%;
+  }
+}
+@media only screen and (max-height: 778px) {
+  .streakBreakPointsContainer {
+    margin-top: 10%;
+  }
+  .cheap-stuff-container {
+    /* height: 400px !important; */
+    overflow-y: scroll;
+  }
+  .scrollableContainer {
+    /* height: 400px !important; */
+    overflow-y: auto;
+    width: 100%;
+    margin-bottom: 20%;
+  }
+}
+@media only screen and (min-height: 779px) {
+  .cheap-stuff-container {
+    height: 400px !important;
+    overflow-y: scroll;
+  }
+  .scrollableContainer {
+    max-height: 600px !important;
+    overflow-y: auto;
+    width: 100%;
+    margin-bottom: 10%;
+  }
+}
+@media only screen and (max-height: 620px) {
+  .cheap-stuff-container {
+    height: 35vh !important;
+    overflow-y: scroll;
+  }
+  .scrollableContainer {
+    height: 55vh !important;
+  }
+  .stuff-body {
+    padding: 2px 35px;
+    max-height: 65vh;
+    overflow-y: scroll;
+  }
+  .stuff-gif {
+    display: none;
+  }
+  .scrollable {
+    height: 50vh !important;
+  }
+  .answer-section {
+    margin-bottom: 10%;
+  }
+  .question-section {
+    padding: 5px !important;
+  }
+  .scramble-count {
+    font-size: 14px !important;
+    margin-top: 10px !important;
+  }
+  .custom-search {
+    margin: 10px 15px !important;
+  }
+  .margin {
+    margin-top: 10px !important;
+  }
+  .scramble-wordbox-container {
+    margin-top: 20px !important;
+  }
+  .answer {
+    bottom: 13% !important;
+  }
+  .hint-text {
+    padding-bottom: 20px !important;
+  }
+  .days-container {
+    margin-top: 0px !important;
+  }
+  .phase-text {
+    margin: 2px !important;
+  }
+  .market-place {
+    overflow-y: scroll;
+    height: 75vh;
   }
 }
 @media only screen and (min-width: 450px) {
@@ -241,6 +327,9 @@
   border: 2px solid;
   border-image-slice: 1;
   border-width: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: press;
   border-image-source: linear-gradient(
     to left,

@@ -4,7 +4,7 @@ import useUserInfo from "../../Hooks/useUserInfo";
 import logo from "../../assets/images/meme-logo.svg";
 import Tv from "../Tv/Tv";
 import "./TotalPoints.css";
-import { UserDeatils } from "../../apis/user";
+import { getUserDetails1, UserDeatils } from "../../apis/user";
 import questionMarkIcon from "../../assets/Task/ReferImg.png";
 import Info from "../PhaseDetails/PhaseDetails";
 
@@ -48,17 +48,54 @@ const TotalPoints = () => {
     getUserDetails(data1);
   }, []);
 
+  const getUserDetailsOnly = async () => {
+    let userDetails1;
+    try {
+      userDetails1 = await getUserDetails1(
+        userDetails?.userDetails?.telegramId
+      );
+    } catch (error) {
+      console.error("Error in updating or fetching user details:", error);
+    }
+    // Update state after both async calls are completed
+    if (userDetails) {
+      updateUserInfo((prev) => ({
+        ...prev,
+        userDetails: userDetails1,
+      }));
+      updatewatchScreenInfo((prev) => ({
+        ...prev,
+        boostersList: userDetails1?.boosters,
+        totalReward: userDetails1?.totalRewards,
+        tapPoints: 0,
+        booster: false,
+        boosterSec: 0,
+        boosterPoints: 0,
+        boosterDetails: {},
+        watchSec: 0,
+      }));
+    }
+    return userDetails;
+  };
   const toogleMenu = () => {
-    updateUserInfo((prev) => ({
-      ...prev,
-      isPlay: false,
-      currentComponent: Tv,
-      currentComponentText: "TVPage",
-      lastComponent: userDetails?.userDetails.currentComponent,
-      lastComponentText: userDetails?.userDetails.currentComponentText,
-      isMenu: false,
-      menuCount: userDetails?.userDetails?.menuCount + 1,
-    }));
+
+      if (!watchScreen.booster) {
+        const data = getUserDetailsOnly().then(() => {
+          updateUserInfo((prev) => ({
+            ...prev,
+            isPlay: false,
+            currentComponent: Tv,
+            currentComponentText: "TVPage",
+            lastComponent: userDetails?.userDetails.currentComponent,
+            lastComponentText: userDetails?.userDetails.currentComponentText,
+            isMenu: true,
+            menuCount: userDetails?.userDetails?.menuCount + 1,
+          }));
+        });
+      }
+    
+   
+    
   };
 
   return (
@@ -82,7 +119,7 @@ const TotalPoints = () => {
       />
       <div className="info-img scroll">
         <div
-          className="menupointer stuff-body"
+          className="menupointer stuffbody1"
           style={{
             height: "100%",
             width: "100%",
@@ -113,10 +150,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">WATCH TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -126,10 +163,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">REFERRAL TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -139,10 +176,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">STREAK TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -152,10 +189,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">GAMING TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -165,10 +202,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">STAKING TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -178,10 +215,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">TASK TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -191,10 +228,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">Levelup TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />
@@ -204,10 +241,10 @@ const TotalPoints = () => {
               </div>
             </div>
             <div className="row mt10 cheap-stuff display-flex">
-              <div className="col-7">
+              <div className="col-6">
                 <h4 className="textcolor">SPENDING TOKENS</h4>
               </div>
-              <div className="col-5">
+              <div className="col-6">
                 <div className="btn-bg">
                   <button className="button-points">
                     <img className="logo-points" src={logo} />

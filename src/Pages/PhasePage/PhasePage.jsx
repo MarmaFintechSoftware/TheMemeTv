@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import stakelogo from "../../assets/images/stake-logo.svg";
 import logo from "../../assets/images/main-logo.svg";
 import "./PhasePage.css";
@@ -13,7 +13,6 @@ const PhasePage = () => {
   const [currentLevel, setCurrentLevel] = useState(userDetails?.currentPhase);
   const [TotalRewards, setTotalRewards] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
   const formatNumber = (num) => {
     if (num >= 1000000) return Math.floor(num / 100000) / 10 + "M";
     if (num >= 1000) return Math.floor(num / 100) / 10 + "k";
@@ -34,6 +33,26 @@ const PhasePage = () => {
     9: "week9",
     10: "week10",
   };
+
+  const scrollableRef = useRef(null);
+
+  useEffect(() => {
+    const preventTouchScroll = (event) => {
+      // Allow scrolling only for the scrollable div
+      if (!scrollableRef.current.contains(event.target)) {
+        event.preventDefault();
+      }
+    };
+    // Add the event listener
+    document.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+    // Cleanup the event listener
+    return () => {
+      document.removeEventListener("touchmove", preventTouchScroll);
+    };
+  }, []);
+
  
 
   const getWeeklyRewardsData = async () => {
@@ -186,14 +205,14 @@ const PhasePage = () => {
               class={currentLevel > 1 ? "arrows prevact" : "arrows prev"}
             ></div>
             <div
-              class={currentLevel ==10?'':`arrows next`}
+              class={currentLevel ==10 ||userDetails?.currentPhase<= currentLevel?'':`arrows next`}
               onClick={() => {
                 if (currentLevel < 10) {
                   setCurrentLevel(currentLevel + 1);
                 }
               }}
             ></div>
-            <div className="phase">
+            <div className="phase" ref={scrollableRef}>
               <div className="row phaseContainer">
                 <div className="col-6">
                   <h1 className="phase-text">PHASE {currentLevel}</h1>

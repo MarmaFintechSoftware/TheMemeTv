@@ -82,6 +82,27 @@ const Streak = () => {
       });
     }
   };
+  const horizontalScrollableRef = useRef(null);
+  const verticalScrollableRef = useRef(null);
+  useEffect(() => {
+    const preventTouchScroll = (event) => {
+      const isHorizontalScrollable =
+        horizontalScrollableRef.current &&
+        horizontalScrollableRef.current.contains(event.target);
+      const isVerticalScrollable =
+        verticalScrollableRef.current &&
+        verticalScrollableRef.current.contains(event.target);
+      if (!isHorizontalScrollable && !isVerticalScrollable) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+    return () => {
+      document.removeEventListener("touchmove", preventTouchScroll);
+    };
+  }, []);
 
   // Scroll to the active day on page load
   useEffect(() => {
@@ -169,6 +190,15 @@ const Streak = () => {
     return userDetails;
   };
 
+  
+  useEffect(() => {
+    console.log("Streak is running",currentDay);
+    
+    if (currentDay){
+    dayCheck(currentDay); 
+    }// You can provide any other value here based on your requirement
+  }, [currentDay]); // Empty dependency array ensures this runs only on initial render
+
   const updateWatchSecOnly = async (data) => {
     const res = await addWatchSeconds(data);
     localStorage.setItem(
@@ -225,6 +255,8 @@ const Streak = () => {
       dayRef.current = 6;
     }
   }; 
+ 
+  
 
   //function to calculate day reward
   const calculateReward = async () => {
@@ -246,6 +278,8 @@ const Streak = () => {
     setClaimedReferDays(getStreakData.claimedReferDays);
     setClaimedTaskDays(getStreakData.claimedTaskDays);
     setClaimedMultiDays(getStreakData.claimedMultiDays);
+    setStartDay(getStreakData?.startDay);
+    setCurrentDay(getStreakData?.currentDay)
 
     if (
       calculatedStreakData.login &&
@@ -562,9 +596,7 @@ const Streak = () => {
     }
   };
 
-  useEffect(() => {
-    dayCheck(currentDay); // You can provide any other value here based on your requirement
-  }, [currentDay]); // Empty dependency array ensures this runs only on initial render
+console.log(currentDay,'currentDay');
 
   useEffect(() => {
     const fetchStreakData = async () => {
@@ -581,10 +613,11 @@ const Streak = () => {
           setClaimedReferDays(getStreakData.claimedReferDays);
           setClaimedTaskDays(getStreakData.claimedTaskDays);
           setClaimedMultiDays(getStreakData.claimedMultiDays);
-        }
-        //updating startDay (use state)
-        setStartDay(getStreakData.startDay);
-        setCurrentDay(getStreakData.currentDay);
+          setStartDay(getStreakData.startDay);
+          setCurrentDay(getStreakData.currentDay)
+            }
+   
+     
 
         // Calculate streak data and update the state
         const calculatedStreakData = await calculateStreak(data);
@@ -700,7 +733,7 @@ updateUserInfo((prev) => ({
           />
         </div>
         <div
-          className="container-fluid zindex"
+          className="container-fluid zindex" ref={horizontalScrollableRef}
           style={{ maxWidth: "300px", marginBottom: "10px", zIndex: "-1" }}
         >
           <div className="scrolling-wrapper row flex-row flex-nowrap">
@@ -866,7 +899,7 @@ updateUserInfo((prev) => ({
             </div> */}
           </div>
         </div>
-        <div className="scrollableContainer">
+        <div className="scrollableContainer" ref={verticalScrollableRef}>
           <div className="row mt10 cheap-stuff">
             <div className="col-2">
               <img

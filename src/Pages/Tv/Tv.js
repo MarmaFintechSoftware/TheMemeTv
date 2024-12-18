@@ -8,7 +8,7 @@ import useUserInfo from "../../Hooks/useUserInfo";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import marketPlack from "../../assets/images/marketPlace.svg";
 import leaderBoarder from "../../assets/images/leaderBoard.svg";
-import { addWatchSeconds, TutorialUpdate } from "../../apis/user";
+import { addWatchSeconds, getUserDetails1, TutorialUpdate } from "../../apis/user";
 import { UserDeatils } from "../../apis/user";
 import marketPlace from "../MarketPlace/marketPlace";
 import TotalPoints from "../TotalPoints/TotalPoints";
@@ -41,7 +41,6 @@ const Tv = (props) => {
     userDetails.userDetails?.level
   );
  const IsTutorial =JSON.parse( localStorage.getItem("tutorialStatus"));
- console.log(typeof(IsTutorial),'IsTutorial');
  
 
   const watchScreenRef = useRef(watchScreen);
@@ -54,7 +53,7 @@ const Tv = (props) => {
   const tapPointsRef = useRef(tapPoints);
   const energy = useRef(5000);
   const [energyy, SetEnergy] = useState(5000);
-  const [boosterPoints, setBoosterPoints] = useState(0);
+  const [boosterPoints, setBoosterPoints] = useState(0);  
   const boosterPointsRef = useRef(boosterPoints);
   const tapSound = new Audio(tapAudio);
 
@@ -75,7 +74,27 @@ const Tv = (props) => {
       }, 3000);
     }
   };
- 
+
+  const scrollableRef = useRef(null);
+
+  useEffect(() => {
+    const preventTouchScroll = (event) => {
+      // Allow scrolling only for the scrollable div
+      if (!scrollableRef.current.contains(event.target)) {
+        event.preventDefault();
+      }
+    };
+    // Add the event listener
+    document.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+    // Cleanup the event listener
+    return () => {
+      document.removeEventListener("touchmove", preventTouchScroll);
+    };
+  }, []);
+
+
 
   useEffect(() => {
     console.log(JSON.stringify(watchScreen.booster) + "watchScreenwatchScreen");
@@ -450,18 +469,30 @@ const Tv = (props) => {
     }));
   };
 
-  const addWatchSecapi = async (data) => {
+  const addWatchSecapi = async (data) => {  
+
     const res = await addWatchSeconds(data);
     localStorage.setItem(
       "pointDetails",
       JSON.stringify({
-        // totalReward: totalRewardPoints,
         tapPoints: 0,
         watchSec: 0,
         boosterPoints: 0,
         booster: [0],
       })
     );
+  
+    // Reset state values
+    setBoosterPoints(0);
+    setSecs(0);
+    setTapPoints(0);
+  
+    // Reset refs to 0
+    secsRef.current = 0;
+    tapPointsRef.current = 0;
+    boosterPointsRef.current = 0;
+    secsOnlyRef.current = 0;
+   
     updatewatchScreenInfo((prev) => ({
       ...prev,
       totalReward: res?.totalRewards,
@@ -471,8 +502,14 @@ const Tv = (props) => {
       boosterPoints: 0,
       boosterDetails: {},
       watchSec: 0,
-      updatedWatchPoints: res?.watchRewards,
+      updatedWatchPoints: res?.watchRewards ,
+      // stakeDetails: res1,
     }));
+   
+   
+   
+    
+   
   };
 
   const addWatchSecapiMarket = async (data) => {
@@ -566,7 +603,7 @@ const Tv = (props) => {
       }, 500);
     }
   };
-
+ 
   const addWatchSecapihelp = async (data) => {
     // setIsLoading(true);
     // clearInterval(intervalRef.current);
@@ -767,44 +804,91 @@ const Tv = (props) => {
     });
   }, [tapPoints, secs]);
 
-  useEffect(() => {
-    watchScreenRef.current = watchScreen;
+// Define the ref outside of useEffect
+const apiCalled = useRef(false);
+const GetPointDetails = JSON.parse(localStorage.getItem("pointDetails"));
+const WatchSecPoint =GetPointDetails?.watchSec;
 
-    if (watchScreen.booster && watchScreen.boosterSec === 0) {
-      var data = {};
-      if (watchScreen.booster) {
-        data = {
-          telegramId: userDetails.userDetails?.telegramId,
-          userWatchSeconds: watchScreen.watchSec + secsRef.current,
-          boosterPoints: String(
-            watchScreen.tapPoints +
-              tapPointsRef.current +
-              watchScreen.boosterPoints +
-              boosterPointsRef.current
-          ),
-          boosters: [watchScreen.boosterDetails.name],
-        };
-      } else {
-        data = {
-          telegramId: userDetails.userDetails?.telegramId,
-          userWatchSeconds: watchScreen.watchSec + secsRef.current,
-          boosterPoints: String(
-            watchScreen.tapPoints +
-              tapPointsRef.current +
-              watchScreen.boosterPoints +
-              boosterPointsRef.current
-          ),
-        };
-      }
+useEffect(() => {
+  watchScreenRef.current = watchScreen;
+  const BoosterVal = watchScreen.boosterDetails.name =="5x"?180:watchScreen.boosterDetails.name=="3x"?120:60;
+  if (watchScreen?.booster && watchScreen?.boosterSec === 0 && !apiCalled?.current) {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+    apiCalled.current = true; // Mark as called
+    const data = {
+      telegramId: userDetails.userDetails?.telegramId,
+      userWatchSeconds:watchScreen.boosterDetails.name=="5x"?180:watchScreen.boosterDetails.name=="3x"?120:60,
+      boosterPoints: watchScreen.boosterDetails.name=="tap"?  String(
+        tapPointsRef.current + boosterPointsRef.current) :( String(
+          tapPointsRef.current + boosterPointsRef.current - (watchScreen.boosterDetails.name=="5x"?180:watchScreen.boosterDetails.name=="3x"?120:60)*currentLevel)
+      ),
+      boosters: watchScreen.booster
+        ? [watchScreen.boosterDetails.name]
+        : undefined,
+    };
+// Call the API
+    addWatchSecapi(data).finally(() => {
+    
+      apiCalled.current = false; // Reset after API call completion
+    });
+  }
 
-      addWatchSecapi(data);
-    }
-  }, [watchScreen, secs]);
+  else if (watchScreen.booster && (watchScreen.boosterSec === BoosterVal)
+    && !apiCalled.current) {
+    
+    apiCalled.current = true; // Mark as called
+    // const data = {
+    //   telegramId: userDetails.userDetails?.telegramId,
+    //   userWatchSeconds:WatchSecPoint,
+    // };
+    var data = {
+      telegramId: userDetails.userDetails.telegramId,
+      userWatchSeconds: WatchSecPoint,
+      boosterPoints: String(
+        tapPointsRef.current + boosterPointsRef.current
+      ),
+    };
+
+    // Call the API
+    UpdateWatchSec(data).finally(() => {
+      apiCalled.current = false; // Reset after API call completion
+    });
+  }
+
+  
+}, [watchScreen, secs]);
+const UpdateWatchSec = async (data) => { 
+  const res = await addWatchSeconds(data);
+  localStorage.setItem(
+    "pointDetails",
+    JSON.stringify({
+      tapPoints: 0,
+      watchSec: 0,
+      boosterPoints: 0,
+      booster: [0],
+    })
+  );
+};
 
   const formatNumber = (num) => {
-    if (num >= 1000000) return Math.floor(num / 100000) / 10 + "M";
-    if (num >= 1000) return Math.floor(num / 100) / 10 + "k";
-    return num;
+    
+    // if (num >= 1000000) return Math.floor(num / 100000) / 10 + "M";
+    // if (num >= 1000) return Math.floor(num / 100) / 10 + "k";
+    // return num;
+    if (num >= 1000000) {
+      return Math.floor(num / 1000000) + "M"; // No decimals for millions
+    } else if (num >= 100000) {
+      return Math.floor(num / 1000) + "k"; // No decimals for >= 100,000
+    } else if (num >= 10000) {
+      return (num / 1000)?.toFixed(1)?.replace(/\.0$/, '') + "k"; // Decimals for 10,000 <= num < 100,000
+    } else if (num >= 1000) {
+      return num?.toString(); // Exact value for 1,000 <= num < 10,000
+    } else {
+      return num?.toString(); // Numbers less than 1,000 as is
+    }
   };
 
   const goToThePage = (component, name) => {
@@ -882,70 +966,82 @@ const Tv = (props) => {
   // };
 
 
-  const handleTap = (e) => {
-    if (energy.current <= 5) return;
-    if (navigator.vibrate) {
-     navigator.vibrate(50);
-    }
-    // tapSound.play();
-    // Extract touch points or use mouse event coordinates
-    const touches = e.touches
-     ? Array.from(e.touches)
-     : [{ clientX: e.clientX, clientY: e.clientY }];
-     // Determine if the event is from a touch or mouse
-     let num = 5;
-     const basePoints =
-     watchScreen?.boosterDetails?.name === "tap" && watchScreen?.booster
+// To prevent multi-tap misfires
+let lastTapTime = 0;
+
+const handleTap = (e) => {
+  const currentTime = Date.now();
+
+  // Ignore multiple taps in quick succession
+  if (currentTime - lastTapTime < 200) return;
+  lastTapTime = currentTime;
+
+  if (energy.current <= 5) return;
+
+  if (navigator.vibrate) {
+    navigator.vibrate(50);
+  }
+
+  // Extract the first touch point or mouse click coordinates
+  const touch = e.touches?.[0] || { clientX: e.clientX, clientY: e.clientY };
+
+  // Define the base points per tap
+  const basePoints =
+    watchScreen?.boosterDetails?.name === "tap" && watchScreen?.booster
       ? 10
       : 5;
-      if (watchScreen?.boosterDetails?.name === "tap" && watchScreen?.booster) {
-      num = 10;
-      setBoosterPoints((prevBoosterPoints) => {
-       const newBoosterPoints = prevBoosterPoints + basePoints * touches.length;
-       boosterPointsRef.current = newBoosterPoints ;
-       return newBoosterPoints ;
-      });
-     } else {
-      if (energyy > 0) {
-       const totalPoints = Math.min(energyy, basePoints * touches.length);
-       setTapPoints((prevTapPoints) => {
+
+  // Calculate total points
+  if (energyy > 0) {
+    const totalPoints = Math.min(energyy, basePoints);
+
+    // Update tap points if booster is not active
+    if (!watchScreen?.booster) {
+      setTapPoints((prevTapPoints) => {
         const newTapPoints = prevTapPoints + totalPoints;
         tapPointsRef.current = newTapPoints;
         return newTapPoints;
-       });
-       SetEnergy((prevEnergy) => {
+      });
+    }
+
+    // Update booster points if booster is active
+    if (watchScreen?.booster) {
+      setBoosterPoints((prevBoosterPoints) => {
+        const newBoosterPoints = prevBoosterPoints + basePoints;
+        boosterPointsRef.current = newBoosterPoints;
+        return newBoosterPoints;
+      });
+    }
+
+    // Deduct energy
+    if (basePoints !== 10) {
+      SetEnergy((prevEnergy) => {
         const newEnergy = prevEnergy - totalPoints;
         energy.current = newEnergy;
         localStorage.setItem(
-         "energyDetails",
-         JSON.stringify({ energy: newEnergy, date: new Date() })
+          "energyDetails",
+          JSON.stringify({ energy: newEnergy, date: new Date() })
         );
         return newEnergy;
-       });
-      }
-     }
-     // if (basePoints === 10) {
-     //  setBoosterPoints((prevBoosterPoints) => {
-     //   const newBoosterPoints =
-     //    prevBoosterPoints + basePoints * touches.length;
-     //   boosterPointsRef.current = newBoosterPoints;
-     //   return newBoosterPoints;
-     //  });
-     // }
-       // Optional animation handling (uncomment if needed)
-      const newAnimations = touches.map((touch) => ({
-      id: Date.now() + Math.random(),
-      x: touch.clientX,
-      y: touch.clientY,
-     }));
-     setTapAnimations((prev) => [...prev, ...newAnimations]);
-     setTimeout(() => {
-      setTapAnimations((prev) =>
-       prev.filter((animation) => !newAnimations.includes(animation))
-      );
-     }, 1000);
-    }  
-  
+      });
+    }
+  }
+
+  // Handle tap animation
+  const newAnimation = {
+    id: Date.now() + Math.random(),
+    x: touch.clientX,
+    y: touch.clientY,
+  };
+  setTapAnimations((prev) => [...prev, newAnimation]);
+  setTimeout(() => {
+    setTapAnimations((prev) =>
+      prev.filter((animation) => animation.id !== newAnimation.id)
+    );
+  }, 1000);
+};
+
+
  // const handleTap = debounce((e) => {
   //   if (energy.current > 5) {
   //     if (navigator.vibrate) {
@@ -1003,7 +1099,7 @@ const Tv = (props) => {
   //       );
   //     }, 1000);
   //   }
-  // });
+  // });  
 
   const CloseTutorial = async ()=>{
     const data = {
@@ -1059,7 +1155,7 @@ const Tv = (props) => {
                       Number(tapPoints)  + 
                       Number(boosterPoints)
                   )}
-                  /{formatNumber(level[currentLevel + 1])}
+                  {currentLevel==10?"":"/"}{formatNumber(level[currentLevel + 1])}
                 </h2>
                 <h2
                   className="level"
@@ -1550,7 +1646,7 @@ const Tv = (props) => {
                   Number(tapPoints) +
                   Number(boosterPoints)
               )}
-              /{formatNumber(level[currentLevel + 1])}
+              {currentLevel==10?"":"/"}{formatNumber(level[currentLevel + 1])}
             </h2>
 
             <div style={{ height: "10px", marginBottom: "10px" }}>
@@ -1572,7 +1668,7 @@ const Tv = (props) => {
               <DashedProgressBar
                 dashcolor={"#E1CA00"}
                 lengthColor={"#E1CA00"}
-                progress={Number(
+                progress={currentLevel==10?100: Number(
                   ((watchScreen.totalReward +
                     secs +
                     tapPoints +
@@ -1743,8 +1839,35 @@ const Tv = (props) => {
             }}
           >
             <h2>
-              <img src={memetv} alt="Meme TV" />
-              <span className="txt-color ml-10">
+              <img
+                src={memetv}
+                alt="Meme TV"
+                style={{
+                  width:
+                    (
+                      watchScreen.totalReward +
+                      secsRef.current +
+                      tapPoints +
+                      boosterPoints
+                    ).toString().length >= 10
+                      ? "25px"
+                      : "30px",
+                }}
+              />
+              <span
+                className="txt-color ml-10"
+                style={{
+                  fontSize:
+                    (
+                      watchScreen.totalReward +
+                      secsRef.current +
+                      tapPoints +
+                      boosterPoints
+                    ).toString().length >= 10
+                      ? "14px"
+                      : "20px",
+                }}
+              >
                 {watchScreen.totalReward +
                   secsRef.current +
                   tapPoints +
@@ -1870,7 +1993,7 @@ const Tv = (props) => {
             zIndex: "-1",
           }}
         >
-          <div
+          <div ref={scrollableRef}
             className="floor"
             style={
               // watchScreen.booster

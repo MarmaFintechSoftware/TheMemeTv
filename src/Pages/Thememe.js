@@ -68,7 +68,24 @@ const Thememe = () => {
     return () => clearInterval(interval); // Cleanup the interval
   }, [watchSec]);
   
+  const scrollableRef = useRef(null);
 
+  useEffect(() => {
+    const preventTouchScroll = (event) => {
+      // Allow scrolling only for the scrollable div
+      if (!scrollableRef.current.contains(event.target)) {
+        event.preventDefault();
+      }
+    };
+    // Add the event listener
+    document.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+    // Cleanup the event listener
+    return () => {
+      document.removeEventListener("touchmove", preventTouchScroll);
+    };
+  }, []);
   
   useEffect(() => {
     const data = localStorage.getItem("tutorial");
@@ -1059,7 +1076,7 @@ const Thememe = () => {
           </div>
         </div>
       </div>
-      <div
+      <div ref={scrollableRef}
         style={{
           height: userDetails.isHeader ? "77%" : "86%",
           width: "100%",

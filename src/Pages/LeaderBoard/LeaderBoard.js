@@ -104,6 +104,26 @@ const LeaderBoard = ({ telegramId }) => {
     if (num >= 1000) return Math.floor(num / 100) / 10 + "k";
     return num;
   };
+
+  const scrollableRef = useRef(null);
+
+  useEffect(() => {
+    const preventTouchScroll = (event) => {
+      // Allow scrolling only for the scrollable div
+      if (!scrollableRef.current.contains(event.target)) {
+        event.preventDefault();
+      }
+    };
+    // Add the event listener
+    document.addEventListener("touchmove", preventTouchScroll, {
+      passive: false,
+    });
+    // Cleanup the event listener
+    return () => {
+      document.removeEventListener("touchmove", preventTouchScroll);
+    };
+  }, []);
+
   return (
     <div className="carousel-container">
       <img
@@ -188,7 +208,7 @@ const LeaderBoard = ({ telegramId }) => {
             </div>
             <h3 className="leaderboard-text">LEADERBOARD</h3>
           </div>
-          <div className="cheap-stuff-container">
+          <div className="cheap-stuff-container" ref={scrollableRef}>
             <div className="row mt0 cheap-stuff1" style={{ width: "100%" }}>
               <div className="col-9 stuff-text1 leader-color">
                 <h4>{userDetail?.name}</h4>

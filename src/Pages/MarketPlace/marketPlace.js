@@ -6,7 +6,7 @@ import ligthing from "../../assets/images/lighting.png";
 import booster3 from "../../assets/images/threex.png";
 import booster2 from "../../assets/images/2booster.png";
 import cancelIcon from "../../assets/Task/cancelicon.png";
-import { purchaseBooster } from "../../apis/user";
+import { getUserDetails1, purchaseBooster } from "../../apis/user";
 import useUserInfo from "../../Hooks/useUserInfo";
 import { UserDeatils } from "../../apis/user";
 import Tv from "../Tv/Tv";
@@ -156,12 +156,58 @@ const MarketPlace = (props) => {
     setErr("");
     setShowPopup(false);
   };
-
+  const getUserDetailsOnly = async () => {
+    let userDetails1;
+    try {
+      userDetails1 = await getUserDetails1(
+        userDetails?.userDetails?.telegramId
+      );
+    } catch (error) {
+      console.error("Error in updating or fetching user details:", error);
+    }
+    // Update state after both async calls are completed
+    if (userDetails) {
+      updateUserInfo((prev) => ({
+        ...prev,
+        userDetails: userDetails1,
+      }));
+      updatewatchScreenInfo((prev) => ({
+        ...prev,
+        boostersList: userDetails1?.boosters,
+        totalReward: userDetails1?.totalRewards,
+        tapPoints: 0,
+        booster: false,
+        boosterSec: 0,
+        boosterPoints: 0,
+        boosterDetails: {},
+        watchSec: 0,
+      }));
+    }
+    return userDetails;
+  };
+  const toogleMenu = () => {
+    
+    if (!watchScreen.booster) {
+      const data = getUserDetailsOnly().then(() => {
+updateUserInfo((prev) => ({
+      ...prev,
+      isPlay: false,
+      currentComponent: Tv,
+      currentComponentText: "TVPage",
+      lastComponent: userDetails?.userDetails.currentComponent,
+      lastComponentText: userDetails?.userDetails.currentComponentText,
+      isMenu: false,
+      menuCount: userDetails?.userDetails?.menuCount + 1,
+    }));
+        // goToThePage(Battle, "BattlePage");
+      });
+    }
+  };
   return (
     <div className="info-img menupointer">
       <img
         onClick={() => {
-          goToThePage(Tv, "TVPage");
+          toogleMenu();
           // console.log("hihihi");
         }}
         src={cancelIcon}
