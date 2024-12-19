@@ -179,11 +179,15 @@ const Thememe = () => {
   }, []);
   const WatchStreakValu1 = userData ? String(userData?.id) : "62655jln9lugkyu18";
   const WatchStreakValu2 = userData ? "" :parsedData1;
+
+  const [hasCalled, setHasCalled] = useState(false);
+
   useEffect(() => {
-    if (watchSec == 180 && !parsedData1?.updated) {
+    if (watchSec >= 180 && !parsedData1?.updated && !hasCalled) {
       postWatchStreak(WatchStreakValu1, WatchStreakValu2);
+      setHasCalled(true); // Mark the function as called
     }
-  }, [watchSec, parsedData1?.updated]);
+  }, [watchSec, parsedData1?.updated, hasCalled]);
 
   const postWatchStreak = async (id, parsedData1) => {
     // console.log("jhgfdsdfghj");

@@ -10,6 +10,7 @@ import ReferPage from "../ReferPage/ReferPage";
 import Task from "../Task/Task";
 import Spinner from "./Spinner"; // Import the spinner component
 import cancelIcon from "../../assets/Task/cancelicon.png";
+import gift from "../../assets/images/gift.svg"
 import {
   UserDeatils,
   addWatchSeconds,
@@ -710,7 +711,7 @@ updateUserInfo((prev) => ({
 
   return (
     <>
-      <div className=" menupointer zindex">
+      <div className={` menupointer zindex ${showPopup?"zindex1":''}`}>
         <div className="streakContainer mt-15">
           <img
             onMouseEnter={() => {
@@ -1214,26 +1215,34 @@ updateUserInfo((prev) => ({
         >
           STREAK OF STREAK
         </button>
-      </div>
-      {showPopup && (
-        <div className="popup">
-          <div className="popup-content">
-            <h2 className="epic">STREAK OF STREAK REWARDS!</h2>
-            <img src={cancelIcon} className="cancel-img" onClick={closePopup} />
-            <div className="row text-center">
-              <div className="col-12">
-                <div className="epic-div">
-                  {/* Display the correct streak reward */}
-                  <h3 className="rw-popup">{streakOfStreakRewardPopUp}!</h3>
+        {showPopup && (
+          <div className="popup1">
+            <div className="popup-content1">
+              <img src={gift} />
+              <h2 className="epic1">STREAK OF STREAK REWARDS!</h2>
+              <img
+                src={cancelIcon}
+                className="cancel-img1"
+                onClick={closePopup}
+              />
+              <div className="row text-center">
+                <div className="col-12">
+                  <div className="epic-div1">
+                    {/* Display the correct streak reward */}
+                    <h3 className="rw-popup1">
+                      <img src={logo} alt="logo" /> {streakOfStreakRewardPopUp}!
+                    </h3>
+                  </div>
                 </div>
               </div>
+              <button className="btn-rewardsos" onClick={closePopup}>
+                DONE
+              </button>
             </div>
-            <button className="btn-reward" onClick={closePopup}>
-              DONE
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      
     </>
   );
 };

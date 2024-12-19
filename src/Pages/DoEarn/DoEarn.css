@@ -70,6 +70,10 @@
 .stuff-p {
   margin-bottom: 0;
   color: #4df03886;
+  align-items: center;
+  display: flex;
+    gap: 5px;
+    margin-top: 5px;
 }
 .stuff-p img {
   width: 15%;

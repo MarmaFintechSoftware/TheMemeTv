@@ -1494,7 +1494,7 @@ const ScrambleaWordPlay = ({ day }) => {
   const [inputValue, setInputValue] = useState("");
   const [scrambleIndex, setScrambleIndex] = useState(0);
   const [points, setPoints] = useState(0);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);  
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
@@ -1540,6 +1540,7 @@ const ScrambleaWordPlay = ({ day }) => {
     }
   };
 
+
   const checkWord = async () => {
     if (chancesOver) return;
     var gamePoints;
@@ -1549,7 +1550,7 @@ const ScrambleaWordPlay = ({ day }) => {
       gamePoints = 2500;
       setPoints(newPoints);
       setMessage("** Correct! You earned 2500 points **");
-      setMessageColor("grey");
+      setMessageColor("green");
       setShowAnswer(false);
     } else {
       gamePoints = 500;
@@ -1581,7 +1582,7 @@ const ScrambleaWordPlay = ({ day }) => {
   const nextScramble = () => {
     var gamePoints;
     if (!isChecked) {
-      setMessage("** Enter a valid word **");
+      setMessage("** Please check the word **");
       setMessageColor("red");
       return;
     }
@@ -1680,7 +1681,7 @@ const ScrambleaWordPlay = ({ day }) => {
           Correct Answer: {dayGameData[scrambleIndex].answer}
         </p>
       )}
-      <button className="quitz-btn" onClick={nextScramble}>
+      <button className={`${!isChecked?"quitz-dsb":'quitz-btn '}`} disabled={!isChecked} onClick={nextScramble}>
         Next
       </button>
       {chancesOver && showCompletionPopup && (

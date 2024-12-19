@@ -9,18 +9,29 @@ const Milestone = () => {
   const { userDetails, updateUserInfo } = useUserInfo();
   const MileItem = [
    
-    {invite:'Invite 3 Friends', points:10000},
-    {invite:'Invite 5 Friends', points:16667},
-    {invite:'Invite 10 Friends', points:33333},
-    {invite:'Invite 20 Friends', points:66667},
-    {invite:'Invite 30 Friends', points:100000},
-    {invite:'Invite 40 Friends', points:133333},
-    {invite:'Invite 50 Friends', points:166667},
-    {invite:'Invite 60 Friends', points:200000},
-    {invite:'Invite 70 Friends', points:233333},
-    {invite:'Invite 80 Friends', points:266667},
-    {invite:'Invite 90 Friends', points:300000},
-    {invite:'Invite 100 Friends', points:333333},
+    {invite:'Invite 3 Friends', points:20000},
+    {invite:'Invite 5 Friends', points:33333},
+    {invite:'Invite 10 Friends', points:66667},
+    {invite:'Invite 15 Friends', points:100000},
+    {invite:'Invite 20 Friends', points:133333},
+    {invite:'Invite 25 Friends', points:166667},
+    {invite:'Invite 30 Friends', points:200000},
+    {invite:'Invite 35 Friends', points:233333},
+    {invite:'Invite 40 Friends', points:266667},
+    {invite:'Invite 45 Friends', points:300000},
+    {invite:'Invite 50 Friends', points:333333},
+    {invite:'Invite 55 Friends', points:366667},
+    {invite:'Invite 60 Friends', points:400000},
+    {invite:'Invite 65 Friends', points:433333},
+    {invite:'Invite 70 Friends', points:466667},
+    {invite:'Invite 75 Friends', points:500000},
+    {invite:'Invite 80 Friends', points:533333},
+    {invite:'Invite 85 Friends', points:566667},
+    {invite:'Invite 90 Friends', points:600000},
+    {invite:'Invite 95 Friends', points:633337},
+    {invite:'Invite 100 Friends', points:666667},
+
+    
 ];
   const goToThePage = (component, name) => {
     updateUserInfo((prev) => ({

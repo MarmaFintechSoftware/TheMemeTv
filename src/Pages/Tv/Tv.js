@@ -1825,13 +1825,21 @@ const handleTap = (e) => {
             className="col-8 points"
             onClick={() => {
               if (!watchScreen.booster) {
+                const values = JSON.parse(
+                  localStorage.getItem("pointDetails")
+                );
                 var data = {
                   telegramId: userDetails.userDetails.telegramId,
-                  userWatchSeconds: secsRef.current,
-                  boosterPoints: String(
-                    tapPointsRef.current + boosterPointsRef.current
-                  ),
+                  userWatchSeconds: values.watchSec + 1,
+                  boosterPoints: String(values.tapPoints),
                 };
+                // var data = {
+                //   telegramId: userDetails.userDetails.telegramId,
+                //   userWatchSeconds: secsRef.current,
+                //   boosterPoints: String(
+                //     tapPointsRef.current + boosterPointsRef.current
+                //   ),
+                // };
                 addWatchSecapiTotal(data);
               } else {
                 handleClick();
@@ -1849,7 +1857,7 @@ const handleTap = (e) => {
                       secsRef.current +
                       tapPoints +
                       boosterPoints
-                    ).toString().length >= 10
+                    ).toString().length <= 10
                       ? "25px"
                       : "30px",
                 }}
@@ -1863,7 +1871,7 @@ const handleTap = (e) => {
                       secsRef.current +
                       tapPoints +
                       boosterPoints
-                    ).toString().length >= 10
+                    ).toString().length <= 10
                       ? "14px"
                       : "20px",
                 }}
