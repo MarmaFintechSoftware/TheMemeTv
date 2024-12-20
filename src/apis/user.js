@@ -1,28 +1,32 @@
 import axios from "axios";
 import { Base_Url } from "./baseurl";
+import apiHelper from "../helpers/apiHelper";
 
 export const UserDeatils = async (data) => {
   try {
-    const response = await axios.post(`${Base_Url.base_url}/login`, data);
-    localStorage.setItem("tutorialStatus",JSON.stringify(response?.data?.user?.tutorialStatus))
-    return response?.data;
+    const result = await apiHelper("post", `${Base_Url.base_url}/login`, data);
+    localStorage.setItem(
+      "tutorialStatus",
+      JSON.stringify(result?.data?.user?.tutorialStatus)
+    );
+    return result?.data;
   } catch (err) {
     console.log(err);
   }
 };
 export const addWatchSeconds = async (data) => {
   try {
-    const response = await axios.post(
+    const response =await apiHelper("post",
       `${Base_Url.base_url}/userWatchRewards`,
       data
     );
 
-    return response.data;
+    return response?.data;
   } catch (err) {}
 };
 export const userGameRewards = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/userGameRewards`,
       data
     );
@@ -36,7 +40,7 @@ export const userGameRewards = async (data) => {
 };
 export const getUserDetails = async (telegramId) => {
   try {
-    const response = await axios.get(
+    const response = await apiHelper("get",
       `${Base_Url.base_url}/userDetails}/${telegramId}`
     );
 
@@ -48,7 +52,7 @@ export const getUserDetails = async (telegramId) => {
 
 export const getUserDetails1 = async (telegramId) => {
   try {
-    const response = await axios.get(
+    const response = await apiHelper("get",
       `${Base_Url.base_url}/userDetails/${telegramId}`
     );
 
@@ -60,7 +64,7 @@ export const getUserDetails1 = async (telegramId) => {
 
 export const purchaseGameCards = async (data) => {
   try {
-    const response = await axios.post(
+    const response =await apiHelper("post",
       `${Base_Url.base_url}/purchaseGameCards`,
       data
     );
@@ -72,7 +76,7 @@ export const purchaseGameCards = async (data) => {
 
 export const myReferrel = async (data) => {
   try {
-    const response = await axios.get(
+    const response = await apiHelper("get",
       `${Base_Url.base_url}/yourReferrals/${data}?page=${1}&limit=${5}`,
       data
     );
@@ -84,7 +88,7 @@ export const myReferrel = async (data) => {
 
 export const purchaseBooster = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/purchaseBooster`,
       data
     );
@@ -96,7 +100,7 @@ export const purchaseBooster = async (data) => {
 
 export const weekRewards = async (data) => {
   try {
-    const response = await axios.get(
+    const response =  await apiHelper("get",
       `${Base_Url.base_url}/weekRewards/${data.telegramId}`
     );
     return response.data;
@@ -107,7 +111,7 @@ export const weekRewards = async (data) => {
 
 export const stakeRewards = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/stakingRewards`,
       data
     );
@@ -119,7 +123,7 @@ export const stakeRewards = async (data) => {
 
 export const getPopularUser = async (telegramId) => {
   try {
-    const response = await axios.get(
+    const response =  await apiHelper("get",
       `${Base_Url.base_url}/popularUser/${telegramId}`
     );
     return response.data;
@@ -130,7 +134,7 @@ export const getPopularUser = async (telegramId) => {
 
 export const getUserStreaks = async (telegramId) => {
   try {
-    const response = await axios.get(
+    const response = await apiHelper("get",
       `${Base_Url.base_url}/userStreaks/${telegramId}`
     );
     return response.data;
@@ -140,13 +144,13 @@ export const getUserStreaks = async (telegramId) => {
 };
 export const calculateStreak = async (data) => {
   try {
-    const response = await axios.post(`${Base_Url.base_url}/streak`, data);
+    const response = await apiHelper("post",`${Base_Url.base_url}/streak`, data);
     return response.data;
   } catch (err) {}
 };
 export const calculateStreakOfStreak = async (data) => {
   try {
-    const response = await axios.post(`${Base_Url.base_url}/streakOfStreak`, {
+    const response = await apiHelper("post",`${Base_Url.base_url}/streakOfStreak`, {
       telegramId: data,
     });
     return response.data;
@@ -161,7 +165,7 @@ export const calculateStreakOfStreak = async (data) => {
 };
 export const loginStreakRewardClaim = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/loginStreakRewardClaim`,
       data
     );
@@ -177,7 +181,7 @@ export const loginStreakRewardClaim = async (data) => {
 };
 export const watchStreakRewardClaim = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/watchStreakRewardClaim`,
       data
     );
@@ -193,7 +197,7 @@ export const watchStreakRewardClaim = async (data) => {
 };
 export const referStreakRewardClaim = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/referStreakRewardClaim`,
       data
     );
@@ -209,7 +213,7 @@ export const referStreakRewardClaim = async (data) => {
 };
 export const taskStreakRewardClaim = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/taskStreakRewardClaim`,
       data
     );
@@ -225,7 +229,7 @@ export const taskStreakRewardClaim = async (data) => {
 };
 export const multiStreakRewardClaim = async (data) => {
   try {
-    const response = await axios.post(
+    const response =  await apiHelper("post",
       `${Base_Url.base_url}/multiStreakRewardClaim`,
       data
     );
@@ -241,7 +245,7 @@ export const multiStreakRewardClaim = async (data) => {
 };
 export const streakOfStreakRewardClaim = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/streakOfStreakRewardClaim`,
       data
     );
@@ -258,7 +262,7 @@ export const streakOfStreakRewardClaim = async (data) => {
 
 export const cheapStuff = async (data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/userTaskRewards`,
       data
     );
@@ -275,7 +279,7 @@ export const cheapStuff = async (data) => {
 
 export const userWalletAddress = async (telegramId, data) => {
   try {
-    const response = await axios.post(
+    const response = await apiHelper("post",
       `${Base_Url.base_url}/addWalletAddress/${telegramId}`,
       data
     );
@@ -287,7 +291,7 @@ export const userWalletAddress = async (telegramId, data) => {
 
 export const TutorialUpdate = async (telegramId, data) => {
   try {
-    const response = await axios.post(
+    const response =await apiHelper("post",
       `${Base_Url.base_url}/tutorialStatus/${telegramId}`,
       data
     );

@@ -35,7 +35,13 @@ const Thememe = () => {
   const { userDetails, watchScreen, updatewatchScreenInfo, updateUserInfo } =
     useUserInfo();
     const IsTutorial = JSON.parse( localStorage.getItem("tutorialStatus"));
-  // disableDevtool();
+      
+   const permittedUserList = JSON.parse(process.env.REACT_APP_PERMITTED_USER || "[]");
+     const PermittedList = permittedUserList?.map((elem) => elem);
+    if ( !PermittedList?.includes(userDetails?.userDetails?.telegramId?userDetails?.userDetails?.telegramId:"62655jln9lugkyu18")){
+      disableDevtool();
+     }
+    
   const latestUserDetails = useRef(userDetails);
   const latestWatchScreen = useRef(watchScreen);
   const [isMarketOpen,setMarketOpen]=useState(false);
@@ -45,7 +51,7 @@ const Thememe = () => {
   useEffect(() => {
     latestUserDetails.current = userDetails;
     latestWatchScreen.current = watchScreen;
-  
+   
    
 
 
@@ -162,10 +168,10 @@ const Thememe = () => {
       const calculatedStreakData = await calculateStreak(data24);
       userDetails.userDetails.streakData = calculatedStreakData;
       if (
-        calculatedStreakData.login &&
-        calculatedStreakData.watch &&
-        calculatedStreakData.refer &&
-        calculatedStreakData.task
+        calculatedStreakData?.login &&
+        calculatedStreakData?.watch &&
+        calculatedStreakData?.refer &&
+        calculatedStreakData?.task
       ) {
         // Calculate and update streak of streak data if needed
         const calculatedStreakOfStreakData = await calculateStreakOfStreak(
