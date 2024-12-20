@@ -23,10 +23,35 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.swal2-container {
+  .swal2-popup {
+    width: 250px;
+    height: 300px;
+    background: black !important;
+    color: white;
+    border: 2px solid #25252569;
+    filter: drop-shadow(2px 4px 6px #25252569);
+    padding: 0px !important;
+}
+}
+
+
+  .swal2-html-container{
+    font-size: .9rem !important;
+    margin-top: 10px;
+    padding: 0px !important;
+    margin: 0px ;
+  }
 
 .App-link {
   color: #61dafb;
 }
+.swal-text,
+ .swal2-title{
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: white;
+  }
 
 @keyframes App-logo-spin {
   from {
