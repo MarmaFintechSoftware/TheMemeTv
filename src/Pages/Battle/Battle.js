@@ -102,6 +102,8 @@ const Battle = () => {
 
  /* testing  */ 
  //Testing 2
+ //dsjk
+ //Final Testing
   return (
     <div className="info-img">
       <div
