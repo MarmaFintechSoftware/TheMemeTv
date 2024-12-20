@@ -99,6 +99,8 @@ const Battle = () => {
     images[userDetails?.userDetails?.level] +
       "images[userDetails?.userDetails?.level - 1]"
   );
+
+ /* testing  */ 
   return (
     <div className="info-img">
       <div
