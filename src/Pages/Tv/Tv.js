@@ -1857,11 +1857,12 @@ const handleTap = (e) => {
                       secsRef.current +
                       tapPoints +
                       boosterPoints
-                    ).toString().length <= 10
+                    ).toString().length >= 9
                       ? "25px"
                       : "30px",
                 }}
               />
+              
               <span
                 className="txt-color ml-10"
                 style={{
@@ -1871,11 +1872,12 @@ const handleTap = (e) => {
                       secsRef.current +
                       tapPoints +
                       boosterPoints
-                    ).toString().length <= 10
+                    ).toString().length >= 9
                       ? "14px"
                       : "20px",
                 }}
               >
+                
                 {watchScreen.totalReward +
                   secsRef.current +
                   tapPoints +
