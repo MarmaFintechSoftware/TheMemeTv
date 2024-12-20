@@ -101,6 +101,7 @@ const Battle = () => {
   );
 
  /* testing  */ 
+ //Testing 2
   return (
     <div className="info-img">
       <div
